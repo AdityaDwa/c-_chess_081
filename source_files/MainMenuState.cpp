@@ -10,23 +10,23 @@ void MainMenuState::initFonts()
 
 void MainMenuState::initBtns()
 {
-    this->btns["black_pawn_a8"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
-    this->btns["black_pawn_b8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 120.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
-    this->btns["black_pawn_c8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 240.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
-    this->btns["black_pawn_d8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 360.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
-    this->btns["black_pawn_e8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 480.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
-    this->btns["black_pawn_f8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 600.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
-    this->btns["black_pawn_g8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 720.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
-    this->btns["black_pawn_h8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 840.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/Black Pawn.png");
+    this->btns["black_pawn_a8"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
+    this->btns["black_pawn_b8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 120.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
+    this->btns["black_pawn_c8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 240.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
+    this->btns["black_pawn_d8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 360.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
+    this->btns["black_pawn_e8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 480.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
+    this->btns["black_pawn_f8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 600.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
+    this->btns["black_pawn_g8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 720.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
+    this->btns["black_pawn_h8"] = new Button(((this->window->getSize().x - 960.f) / 2) + 840.f, ((this->window->getSize().y - 960.f) / 2) - 20.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/black_pawn.png");
 
-    this->btns["white_pawn_a1"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
-    this->btns["white_pawn_b1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 120.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
-    this->btns["white_pawn_c1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 240.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
-    this->btns["white_pawn_d1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 360.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
-    this->btns["white_pawn_e1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 480.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
-    this->btns["white_pawn_f1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 600.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
-    this->btns["white_pawn_g1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 720.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
-    this->btns["white_pawn_h1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 840.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/White Pawn.png");
+    this->btns["white_pawn_a1"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
+    this->btns["white_pawn_b1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 120.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
+    this->btns["white_pawn_c1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 240.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
+    this->btns["white_pawn_d1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 360.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
+    this->btns["white_pawn_e1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 480.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
+    this->btns["white_pawn_f1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 600.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
+    this->btns["white_pawn_g1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 720.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
+    this->btns["white_pawn_h1"] = new Button(((this->window->getSize().x - 960.f) / 2) + 840.f, ((this->window->getSize().y - 960.f) / 2) + 820.f, 120, 120, &this->font, "", sf::Color(0, 0, 0, 0), sf::Color(169, 169, 169), "../images/white_pawn.png");
 }
 
 MainMenuState::MainMenuState(sf::RenderWindow *window) : State(window)
@@ -66,8 +66,8 @@ void MainMenuState::updateBtns()
 
     if (this->btns["white_pawn_a1"]->isClicked)
     {
-        this->btns["move1"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) + 720.f, 120, 120, &this->font, "", sf::Color(169, 169, 169), sf::Color(169, 169, 169), "../images/White Pawn.png");
-        this->btns["move2"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) + 600.f, 120, 120, &this->font, "", sf::Color(169, 169, 169), sf::Color(169, 169, 169), "../images/White Pawn.png");
+        this->btns["move1"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) + 720.f, 120, 120, &this->font, "", sf::Color(169, 169, 169), sf::Color(169, 169, 169), "../images/white_pawn.png");
+        this->btns["move2"] = new Button(((this->window->getSize().x - 960.f) / 2), ((this->window->getSize().y - 960.f) / 2) + 600.f, 120, 120, &this->font, "", sf::Color(169, 169, 169), sf::Color(169, 169, 169), "../images/white_pawn.png");
     }
 }
 
