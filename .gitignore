@@ -1,0 +1,7 @@
+# Folders
+logs
+
+# Files
+*.o
+*.exe
+.vscode/settings.json
