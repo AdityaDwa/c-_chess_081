@@ -7,6 +7,7 @@
 #include <sstream>
 #include <vector>
 #include <stack>
+#include <string>
 #include <map>
 
 #include <SFML/System.hpp>
@@ -28,16 +29,14 @@ protected:
     sf::Vector2i mousePosWindow;
     sf::Vector2f mousePosView;
 
-
 public:
-    State(bool *toRender, sf::RenderWindow *window);
+    State(sf::RenderWindow *window);
     virtual ~State();
 
     const bool& isStateQuit() const;
     virtual void updateMousePositions();
 
-    virtual void updateInput(const float& deltaTime) = 0;
     virtual void update(const float& deltaTime) = 0;
-    virtual void render(bool *toRender, sf::RenderTarget *target = nullptr) = 0;
+    virtual void render(sf::RenderTarget *target = nullptr) = 0;
     virtual void endState() = 0;
 };

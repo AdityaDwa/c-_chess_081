@@ -1,6 +1,6 @@
 #include "../header_files/State.h"
 
-State::State(bool *toRender, sf::RenderWindow *window)
+State::State(sf::RenderWindow *window)
 {
     this->window = window;
     this->quitState = false;

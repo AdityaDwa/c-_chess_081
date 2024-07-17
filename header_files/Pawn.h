@@ -7,7 +7,7 @@ class Pawn : public Piece
 private:
 
 public:
-    Pawn(bool pieceColor, int row, int column, float boardSquareSize, float boardDimension, sf::RenderTarget *target);
+    Pawn(bool pieceColor, int row, int column, sf::RenderTarget *target);
     virtual ~Pawn();
 
     void update(const sf::Vector2f mousePos);

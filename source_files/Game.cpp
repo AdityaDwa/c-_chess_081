@@ -6,12 +6,11 @@ void Game::initWindow()
     this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
-    this->toRender = new bool(true);
 }
 
 void Game::initStates()
 {
-    this->stateStack.push(new MatchState(this->toRender, this->window));
+    this->stateStack.push(new MatchState(this->window));
 }
 
 Game::Game()
@@ -66,17 +65,14 @@ void Game::updateWindow()
 
 void Game::renderWindow()
 {
-    if (*this->toRender)
+    this->window->clear();
+
+    if (!this->stateStack.empty())
     {
-        this->window->clear();
-
-        if (!this->stateStack.empty())
-        {
-            this->stateStack.top()->render(this->toRender, nullptr);
-        }
-
-        this->window->display();
+        this->stateStack.top()->render();
     }
+
+    this->window->display();
 }
 
 void Game::run()

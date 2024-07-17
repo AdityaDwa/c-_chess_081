@@ -1,12 +1,12 @@
 #include "../header_files/Knight.h"
 
-Knight::Knight(bool pieceColor, int row, int column, float boardSquareSize, float boardDimension, sf::RenderTarget *target) : Piece(pieceColor, row, column, boardSquareSize, boardDimension, target)
+Knight::Knight(bool pieceColor, int row, int column, sf::RenderTarget *target) : Piece(pieceColor, row, column, target)
 {
-    this->xPosition = ((target->getSize().x - boardDimension) / 2) + (row * boardSquareSize);
-    this->yPosition = ((target->getSize().y - boardDimension) / 2) + ((7 - column) * boardSquareSize);
+    this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
+    this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
 
     this->buttonShape.setPosition(sf::Vector2f(this->xPosition, this->yPosition));
-    this->buttonShape.setSize(sf::Vector2f(boardSquareSize, boardSquareSize));
+    this->buttonShape.setSize(sf::Vector2f(120.f, 120.f));
     this->buttonShape.setFillColor(sf::Color(0, 0, 0, 0));
 
     if (pieceColor)
@@ -21,8 +21,8 @@ Knight::Knight(bool pieceColor, int row, int column, float boardSquareSize, floa
     this->texture.setSmooth(true);
     this->sprite.setTexture(this->texture);
 
-    float scaleX = boardSquareSize / this->sprite.getLocalBounds().width;
-    float scaleY = boardSquareSize / this->sprite.getLocalBounds().height;
+    float scaleX = 120.f / this->sprite.getLocalBounds().width;
+    float scaleY = 120.f / this->sprite.getLocalBounds().height;
 
     this->sprite.setScale(scaleX, scaleY);
     this->sprite.setPosition(this->xPosition, this->yPosition);

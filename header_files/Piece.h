@@ -35,7 +35,7 @@ protected:
     sf::Sprite sprite;
 
 public:
-    Piece(bool pieceColor, int row, int column, float boardSquareSize, float boardDimension, sf::RenderTarget *target);
+    Piece(bool pieceColor, int row, int column, sf::RenderTarget *target);
     virtual ~Piece();
 
     virtual void update(const sf::Vector2f mousePos) = 0;

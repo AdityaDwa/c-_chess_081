@@ -18,8 +18,6 @@ public:
     Game();
     virtual ~Game();
 
-    bool *toRender;
-
     void updateDeltaTime();
     void updateWindow();
     void renderWindow();

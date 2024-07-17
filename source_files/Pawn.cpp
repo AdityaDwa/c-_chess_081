@@ -1,12 +1,12 @@
 #include "../header_files/Pawn.h"
 
-Pawn::Pawn(bool pieceColor, int row, int column, float boardSquareSize, float boardDimension, sf::RenderTarget *target) : Piece(pieceColor, row, column, boardSquareSize, boardDimension, target)
+Pawn::Pawn(bool pieceColor, int row, int column, sf::RenderTarget *target) : Piece(pieceColor, row, column, target)
 {
-    this->xPosition = ((target->getSize().x - boardDimension) / 2) + (row * boardSquareSize);
-    this->yPosition = ((target->getSize().y - boardDimension) / 2) + ((7 - column) * boardSquareSize);
+    this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
+    this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
 
     this->buttonShape.setPosition(sf::Vector2f(this->xPosition, this->yPosition));
-    this->buttonShape.setSize(sf::Vector2f(boardSquareSize, boardSquareSize));
+    this->buttonShape.setSize(sf::Vector2f(120.f, 120.f));
     this->buttonShape.setFillColor(sf::Color(0, 0, 0, 0));
 
     if (pieceColor)
@@ -21,11 +21,13 @@ Pawn::Pawn(bool pieceColor, int row, int column, float boardSquareSize, float bo
     this->texture.setSmooth(true);
     this->sprite.setTexture(this->texture);
 
-    float scaleX = boardSquareSize / this->sprite.getLocalBounds().width;
-    float scaleY = boardSquareSize / this->sprite.getLocalBounds().height;
+    float scaleX = 120.f / this->sprite.getLocalBounds().width;
+    float scaleY = 120.f / this->sprite.getLocalBounds().height;
 
     this->sprite.setScale(scaleX, scaleY);
     this->sprite.setPosition(this->xPosition, this->yPosition);
+
+    this->isClicked = false;
 }
 
 Pawn::~Pawn()
@@ -34,19 +36,34 @@ Pawn::~Pawn()
 
 void Pawn::update(const sf::Vector2f mousePos)
 {
-    // this->buttonShape.setFillColor(sf::Color(0, 0, 0, 0));
-
-    // this->isClicked = false;
     // if (this->buttonShape.getGlobalBounds().contains(mousePos)) {
-    //     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+    //     // if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
     //         this->buttonShape.setFillColor(sf::Color(169, 169, 169));
     //         this->isClicked = true;
-    //     }
-    //     else {
-    //         this->isClicked = false;
-    //     }
-
+        // }
+        // else {
+            // this->isClicked = false;
+        // }
     // }
+    static bool wasPressed = false;
+    static int clickCount = 0;
+
+    if (this->buttonShape.getGlobalBounds().contains(mousePos))
+    {
+        bool isPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+        if (isPressed && !wasPressed)
+        {
+            clickCount++;
+            this->isClicked = (clickCount % 2 == 1);
+            this->buttonShape.setFillColor(isClicked ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0));
+        }
+        wasPressed = isPressed;
+    }
+    else
+    {
+        wasPressed = false;
+    }
 }
 
 void Pawn::render(sf::RenderTarget *target)
