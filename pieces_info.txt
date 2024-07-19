@@ -1,32 +1,64 @@
-rook, true, 0, 0, rook1
-knight, true, 1, 0, knight1
-bishop, true, 2, 0, bishop1
-queen, true, 3, 0, queen1
-king, true, 4, 0, king1
-bishop, true, 5, 0, bishop2 
-knight, true, 6, 0, knight2
-rook, true, 7, 0, rook2
-pawn, true, 0, 1, pawn1
-pawn, true, 1, 1, pawn2
-pawn, true, 2, 1, pawn3
-pawn, true, 3, 1, pawn4
-pawn, true, 4, 1, pawn5
-pawn, true, 5, 1, pawn6
-pawn, true, 6, 1, pawn7
-pawn, true, 7, 1, pawn8
-pawn, false, 0, 6, pawn1
-pawn, false, 1, 6, pawn2
-pawn, false, 2, 6, pawn3
-pawn, false, 3, 6, pawn4
-pawn, false, 4, 6, pawn5
-pawn, false, 5, 6, pawn6
-pawn, false, 6, 6, pawn7
-pawn, false, 7, 6, pawn8
-rook, false, 0, 7, rook1
-knight, false, 1, 7, knight1
-bishop, false, 2, 7, bishop1
-queen, false, 3, 7, queen1
-king, false, 4, 7, king1
-bishop, false, 5, 7, bishop2
-knight, false, 6, 7, knight2
-rook, false, 7, 7, rook2
+0, 0, rook, true, rook1
+1, 0, knight, true, knight1
+2, 0, bishop, true, bishop1
+3, 0, queen, true, queen1
+4, 0, king, true, king1
+5, 0, bishop, true, bishop2
+6, 0, knight, true, knight2
+7, 0, rook, true, rook2
+0, 1, pawn, true, pawn1
+1, 1, pawn, true, pawn2
+2, 1, pawn, true, pawn3
+3, 1, pawn, true, pawn4
+4, 1, pawn, true, pawn5
+5, 1, pawn, true, pawn6
+6, 1, pawn, true, pawn7
+7, 1, pawn, true, pawn8
+0, 2, , ,
+1, 2, , , 
+2, 2, , ,
+3, 2, , ,
+4, 2, , ,
+5, 2, , ,
+6, 2, , ,
+7, 2, , ,
+0, 3, , ,
+1, 3, , ,
+2, 3, , ,
+3, 3, , ,
+4, 3, , , 
+5, 3, , ,
+6, 3, , ,
+7, 3, , ,
+0, 4, , ,
+1, 4, , ,
+2, 4, , ,
+3, 4, , ,
+4, 4, , ,
+5, 4, , ,
+6, 4, , , 
+7, 4, , ,
+0, 5, , ,
+1, 5, , ,
+2, 5, , ,
+3, 5, , ,
+4, 5, , ,
+5, 5, , ,
+6, 5, , ,
+7, 5, , ,
+0, 6, pawn, false, pawn1
+1, 6, pawn, false, pawn2
+2, 6, pawn, false, pawn3
+3, 6, pawn, false, pawn4
+4, 6, pawn, false, pawn5
+5, 6, pawn, false, pawn6
+6, 6, pawn, false, pawn7
+7, 6, pawn, false, pawn8
+0, 7, rook, false, rook1
+1, 7, knight, false, knight1
+2, 7, bishop, false, bishop1
+3, 7, queen, false, queen1
+4, 7, king, false, king1
+5, 7, bishop, false, bishop2
+6, 7, knight, false, knight2
+7, 7, rook, false, rook2

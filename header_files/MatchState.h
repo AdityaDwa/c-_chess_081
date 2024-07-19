@@ -3,12 +3,16 @@
 #include "State.h"
 #include "Piece.h"
 #include "Pawn.h"
+#include "Bishop.h"
 #include "Knight.h"
+#include "Rook.h"
+#include "Queen.h"
+#include "King.h"
 
 class MatchState : public State
 {
 private:
-    Piece* boardPieces[32];
+    Piece* boardPieces[8][8];
     
 public:
     MatchState(sf::RenderWindow *window);

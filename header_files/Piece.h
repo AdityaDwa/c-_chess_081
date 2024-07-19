@@ -1,14 +1,15 @@
 #pragma once
 
 #include <iostream>
-#include <string>
 #include <ctime>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <stack>
+#include <string>
 #include <map>
+#include <filesystem>
 
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
@@ -28,14 +29,12 @@ protected:
     float xPosition;
     float yPosition;
 
-    bool isClicked;
-
     sf::RectangleShape buttonShape;
     sf::Texture texture;
     sf::Sprite sprite;
 
 public:
-    Piece(bool pieceColor, int row, int column, sf::RenderTarget *target);
+    Piece(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target);
     virtual ~Piece();
 
     virtual void update(const sf::Vector2f mousePos) = 0;

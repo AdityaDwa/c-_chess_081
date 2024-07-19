@@ -1,6 +1,6 @@
-#include "../header_files/Knight.h"
+#include "../header_files/Rook.h"
 
-Knight::Knight(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target) : Piece(pieceColor, row, column, btnColor, target)
+Rook::Rook(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target) : Piece(pieceColor, row, column, btnColor, target)
 {
     this->row = row;
     this->column = column;
@@ -13,11 +13,11 @@ Knight::Knight(bool pieceColor, int row, int column, sf::Color btnColor, sf::Ren
 
     if (pieceColor)
     {
-        this->texture.loadFromFile("../src/white_knight.png");
+        this->texture.loadFromFile("../src/white_rook.png");
     }
     else
     {
-        this->texture.loadFromFile("../src/black_knight.png");
+        this->texture.loadFromFile("../src/black_rook.png");
     }
 
     this->texture.setSmooth(true);
@@ -30,11 +30,11 @@ Knight::Knight(bool pieceColor, int row, int column, sf::Color btnColor, sf::Ren
     this->sprite.setPosition(this->xPosition, this->yPosition);
 }
 
-Knight::~Knight()
+Rook::~Rook()
 {
 }
 
-void Knight::update(const sf::Vector2f mousePos)
+void Rook::update(const sf::Vector2f mousePos)
 {
     static bool wasPressed = false;
     static sf::Clock debounceClock;
@@ -85,7 +85,7 @@ void Knight::update(const sf::Vector2f mousePos)
     }
 }
 
-void Knight::render(sf::RenderTarget *target)
+void Rook::render(sf::RenderTarget *target)
 {
     target->draw(this->buttonShape);
     target->draw(this->sprite);

@@ -2,13 +2,13 @@
 
 #include "Piece.h"
 
-class Pawn : public Piece
+class Rook : public Piece
 {
 private:
 
 public:
-    Pawn(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target);
-    virtual ~Pawn();
+    Rook(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target);
+    virtual ~Rook();
 
     void update(const sf::Vector2f mousePos);
     void render(sf::RenderTarget *target);

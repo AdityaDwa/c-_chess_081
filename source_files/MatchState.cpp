@@ -4,35 +4,39 @@ MatchState::MatchState(sf::RenderWindow *window) : State(window)
 {
     this->stateBackground.setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
     this->stateBackground.setFillColor(sf::Color(119, 149, 86));
-    for (int i = 0; i < 32; i++)
+    for (int i = 0; i < 8; i++)
     {
-        this->boardPieces[i] = nullptr;
+        for (int j = 0; j < 8; j++)
+        {
+            this->boardPieces[i][j] = nullptr;
+        }
     }
 }
 
 MatchState::~MatchState()
 {
-    for (int i = 0; i < 32; ++i)
+    for (int i = 0; i < 8; i++)
     {
-        delete this->boardPieces[i];
-        this->boardPieces[i] = nullptr;
+        for (int j = 0; i < 8; j++)
+        {
+            delete this->boardPieces[i][j];
+            this->boardPieces[i][j] = nullptr;
+        }
     }
-
-    // auto btnPair = this->btns.begin();
-    // for (btnPair = this->btns.begin(); btnPair != this->btns.end(); ++btnPair)
-    // {
-    //     delete btnPair->second;
-    // }
 }
 
 void MatchState::update(const float &deltaTime)
 {
     this->updateMousePositions();
-    for (int i = 0; i < 32; i++)
+
+    for (int i = 0; i < 8; i++)
     {
-        if (this->boardPieces[i] != nullptr)
+        for (int j = 0; j < 8; j++)
         {
-            this->boardPieces[i]->update(this->mousePosView);
+            if (this->boardPieces[i][j] != nullptr)
+            {
+                this->boardPieces[i][j]->update(this->mousePosView);
+            }
         }
     }
 }
@@ -81,44 +85,83 @@ void MatchState::renderPieces(sf::RenderTarget *target)
     std::ifstream file("../pieces_info.txt");
     std::string line;
 
-    int i = 0;
-    while (std::getline(file, line))
+    std::ifstream sourceFile("../active_tiles.txt");
+    std::string linecoord;
+
+    for (int i = 0; i < 8; i++)
     {
-        std::istringstream ss(line);
-
-        std::string pieceType;
-        bool pieceColor;
-        int row, col;
-        std::string pieceIdentifier;
-
-        std::getline(ss, pieceType, ',');
-        ss >> std::boolalpha >> pieceColor;
-        ss.ignore(1, ',');
-        ss >> row;
-        ss.ignore(1, ',');
-        ss >> col;
-        ss.ignore(1, ',');
-        std::getline(ss, pieceIdentifier);
-
-        pieceType = pieceType.substr(pieceType.find_first_not_of(" \t"));
-        pieceIdentifier = pieceIdentifier.substr(pieceIdentifier.find_first_not_of(" \t"));
-
-        if (pieceType == "pawn")
+        for (int j = 0; j < 8; j++)
         {
-            this->boardPieces[i] = new Pawn(pieceColor, row, col, target);
-            this->boardPieces[i]->render(target);
-        }
-        else
-        {
-            this->boardPieces[i] = new Knight(pieceColor, row, col, target);
-            this->boardPieces[i]->render(target);
-        }
-        // else{
-        //     this->boardPieces[i] = nullptr;
-        // }
+            std::getline(file, line);
+            std::istringstream ss(line);
 
-        i++;
+            std::getline(sourceFile, linecoord);
+            std::istringstream sscoord(linecoord);
+
+            int row, col;
+            std::string pieceType;
+            bool pieceColor;
+            std::string pieceIdentifier;
+
+            int num1, num2, num3;
+            char delimiter1, delimiter2;
+
+            ss >> row;
+            ss.ignore(1, ',');
+
+            ss >> col;
+            ss.ignore(1, ',');
+
+            std::getline(ss, pieceType, ',');
+            if (ss.fail())
+                continue;
+
+            ss >> std::boolalpha >> pieceColor;
+            if (ss.fail() || ss.peek() != ',')
+                continue;
+            ss.ignore(1, ',');
+
+            std::getline(ss, pieceIdentifier);
+            if (ss.fail())
+                continue;
+
+            pieceType = pieceType.substr(pieceType.find_first_not_of(" \t"));
+            pieceIdentifier = pieceIdentifier.substr(pieceIdentifier.find_first_not_of(" \t"));
+
+            sscoord >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3;
+
+            sf::Color color = num3 ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0); 
+
+            delete this->boardPieces[i][j];
+            if (pieceType == "pawn")
+            {
+                this->boardPieces[i][j] = new Pawn(pieceColor, row, col, color, target);
+            }
+            else if (pieceType == "bishop")
+            {
+                this->boardPieces[i][j] = new Bishop(pieceColor, row, col, color, target);
+            }
+            else if (pieceType == "knight")
+            {
+                this->boardPieces[i][j] = new Knight(pieceColor, row, col, color, target);
+            }
+            else if (pieceType == "rook")
+            {
+                this->boardPieces[i][j] = new Rook(pieceColor, row, col, color, target);
+            }
+            else if (pieceType == "queen")
+            {
+                this->boardPieces[i][j] = new Queen(pieceColor, row, col, color, target);
+            }
+            else
+            {
+                this->boardPieces[i][j] = new King(pieceColor, row, col, color, target);
+            }
+
+            this->boardPieces[i][j]->render(target);
+        }
     }
 
     file.close();
+    sourceFile.close();
 }

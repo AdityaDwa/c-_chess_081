@@ -1,13 +1,15 @@
 #include "../header_files/Pawn.h"
 
-Pawn::Pawn(bool pieceColor, int row, int column, sf::RenderTarget *target) : Piece(pieceColor, row, column, target)
+Pawn::Pawn(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target) : Piece(pieceColor, row, column, btnColor, target)
 {
+    this->row = row;
+    this->column = column;
     this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
     this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
 
     this->buttonShape.setPosition(sf::Vector2f(this->xPosition, this->yPosition));
     this->buttonShape.setSize(sf::Vector2f(120.f, 120.f));
-    this->buttonShape.setFillColor(sf::Color(0, 0, 0, 0));
+    this->buttonShape.setFillColor(btnColor);
 
     if (pieceColor)
     {
@@ -26,8 +28,6 @@ Pawn::Pawn(bool pieceColor, int row, int column, sf::RenderTarget *target) : Pie
 
     this->sprite.setScale(scaleX, scaleY);
     this->sprite.setPosition(this->xPosition, this->yPosition);
-
-    this->isClicked = false;
 }
 
 Pawn::~Pawn()
@@ -36,28 +36,47 @@ Pawn::~Pawn()
 
 void Pawn::update(const sf::Vector2f mousePos)
 {
-    // if (this->buttonShape.getGlobalBounds().contains(mousePos)) {
-    //     // if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-    //         this->buttonShape.setFillColor(sf::Color(169, 169, 169));
-    //         this->isClicked = true;
-        // }
-        // else {
-            // this->isClicked = false;
-        // }
-    // }
     static bool wasPressed = false;
-    static int clickCount = 0;
+    static sf::Clock debounceClock;
+    const sf::Time debounceTime = sf::milliseconds(200);
 
     if (this->buttonShape.getGlobalBounds().contains(mousePos))
     {
         bool isPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
-        if (isPressed && !wasPressed)
+        if (isPressed && !wasPressed && debounceClock.getElapsedTime() > debounceTime)
         {
-            clickCount++;
-            this->isClicked = (clickCount % 2 == 1);
-            this->buttonShape.setFillColor(isClicked ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0));
+            static bool isClicked = false;
+            isClicked = !isClicked;
+            std::ifstream sourceFile("../active_tiles.txt");
+            std::ofstream destinationFile("../modifying_tiles.txt");
+            std::string line;
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    std::getline(sourceFile, line);
+                    std::istringstream ss(line);
+                    int num1, num2, num3;
+                    char delimiter1, delimiter2;
+                    if (ss >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3)
+                    {
+                        if (num1 == this->row && num2 == this->column)
+                        {
+                            num3 = isClicked;
+                        }
+                    }
+
+                    destinationFile << num1 << ',' << num2 << ',' << num3 << std::endl;
+                }
+            }
+            sourceFile.close();
+            destinationFile.close();
+            std::filesystem::remove("../active_tiles.txt");
+            std::filesystem::rename("../modifying_tiles.txt", "../active_tiles.txt");
+            debounceClock.restart();
         }
+
         wasPressed = isPressed;
     }
     else
