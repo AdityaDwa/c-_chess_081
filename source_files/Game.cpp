@@ -2,8 +2,8 @@
 
 void Game::initWindow()
 {
-    // this->window = new sf::RenderWindow(sf::VideoMode(800, 600), "Chess", sf::Style::Titlebar | sf::Style::Close);
-    this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
+    this->window = new sf::RenderWindow(sf::VideoMode(1440, 810), "Chess", sf::Style::Titlebar | sf::Style::Close);
+    // this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(false);
 }
