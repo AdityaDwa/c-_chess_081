@@ -133,10 +133,10 @@ void MatchState::renderPieces(sf::RenderTarget *target)
             sf::Color color = num3 ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0); 
             if (num3)
             {
-                // delete this->boardPieces[3][3];
-                // this->boardPieces[3][3] = new Pawn(true, 3, 3, color, target);
-                // this->boardPieces[3][3]->render(target);
-                this->boardPieces[i][j]->move(i, j, 4, 4);
+                delete this->boardPieces[3][3];
+                this->boardPieces[3][3] = new Pawn(true, 3, 3, color, target);
+                this->boardPieces[3][3]->render(target);
+                // this->boardPieces[i][j]->move(i, j, 4, 4);
             }
             
 
