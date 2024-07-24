@@ -13,7 +13,7 @@ Pawn::Pawn(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderT
 
     if (pieceColor)
     {
-        this->texture.loadFromFile("../src/white_pawn.png"); // handle error
+        this->texture.loadFromFile("../src/white_pawn.png");
     }
     else
     {
@@ -83,4 +83,56 @@ void Pawn::render(sf::RenderTarget *target)
 {
     target->draw(this->buttonShape);
     target->draw(this->sprite);
+}
+
+void Pawn::possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>> &moveArray)
+{
+    if (pieceColor)
+    {
+        bool up = (column + 1) < 8;
+        bool right = (row + 1) < 8;
+        bool left = (row - 1) >= 0;
+        bool intialPos = (column == 1);
+
+        if (up)
+        {
+            moveArray.push_back({row, column + 1});
+            if (right)
+            {
+                moveArray.push_back({row + 1, column + 1});
+            }
+            if (left)
+            {
+                moveArray.push_back({row - 1, column + 1});
+            }
+        }
+        if (intialPos)
+        {
+            moveArray.push_back({row, column + 2});
+        }
+    }
+    else
+    {
+        bool down = (column - 1) >= 0;
+        bool right = (row + 1) < 8;
+        bool left = (row - 1) >= 0;
+        bool intialPos = (column == 6);
+
+        if (down)
+        {
+            moveArray.push_back({row, column - 1});
+            if (right)
+            {
+                moveArray.push_back({row + 1, column - 1});
+            }
+            if (left)
+            {
+                moveArray.push_back({row - 1, column - 1});
+            }
+        }
+        if (intialPos)
+        {
+            moveArray.push_back({row, column - 2});
+        }
+    }
 }

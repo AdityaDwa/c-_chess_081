@@ -84,3 +84,61 @@ void Queen::render(sf::RenderTarget *target)
     target->draw(this->buttonShape);
     target->draw(this->sprite);
 }
+
+void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray){
+    int i = 1;
+    while ((column + i) < 8)
+    {
+        moveArray.push_back({row, column + i});
+        i++;
+    }
+
+    int j = 1;
+    while ((column - j) >= 0)
+    {
+        moveArray.push_back({row, column - j});
+        j++;
+    }
+
+    int k = 1;
+    while ((row + k) < 8)
+    {
+        moveArray.push_back({row + k, column});
+        k++;
+    }
+
+    int l = 1;
+    while ((row - l) >= 0)
+    {
+        moveArray.push_back({row - l, column});
+        l++;
+    }
+
+    int m = 1;
+    while (((row + m) < 8) && ((column + m) < 8))
+    {
+        moveArray.push_back({row + m, column + m});
+        m++;
+    }
+    
+    int n = 1;
+    while (((row + n) < 8) && ((column - n) >= 0))
+    {
+        moveArray.push_back({row + n, column - n});
+        n++;
+    }
+
+    int o = 1;
+    while (((row - o) >= 0) && ((column + o) < 8))
+    {
+        moveArray.push_back({row - o, column + o});
+        o++;
+    }
+
+    int p = 1;
+    while (((row - p) >= 0) && ((column - p) >= 0))
+    {
+        moveArray.push_back({row - p, column - p});
+        p++;
+    }
+}

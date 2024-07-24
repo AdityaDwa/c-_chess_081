@@ -84,3 +84,50 @@ void Knight::render(sf::RenderTarget *target)
     target->draw(this->buttonShape);
     target->draw(this->sprite);
 }
+
+void Knight::possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray){
+    bool up = (column + 2) < 8;
+    bool down = (column - 2) >= 0;
+    bool right = (row + 2) < 8;
+    bool left = (row - 2) >= 0;
+
+    if (((row + 1) < 8) && up)
+    {
+        moveArray.push_back({row + 1, column + 2});
+    }
+
+    if (((row - 1) >= 0) && up)
+    {
+        moveArray.push_back({row - 1, column + 2});
+    }
+
+    if (right && ((column + 1) < 8))
+    {
+        moveArray.push_back({row + 2, column + 1});
+    }
+
+    if (right && ((column - 1) >= 0))
+    {
+        moveArray.push_back({row + 2, column - 1});
+    }
+    
+    if (((row + 1) < 8) && down)
+    {
+        moveArray.push_back({row + 1, column - 2});
+    }
+
+    if (((row - 1) >= 0) && down)
+    {
+        moveArray.push_back({row - 1, column - 2});
+    }
+
+    if (left && ((column + 1) < 8))
+    {
+        moveArray.push_back({row - 2, column + 1});
+    }
+
+    if (left && ((column - 1) >= 0))
+    {
+        moveArray.push_back({row - 2, column - 1});
+    }
+}

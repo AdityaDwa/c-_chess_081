@@ -8,112 +8,107 @@ Piece::~Piece()
 {
 }
 
-void Piece::move(int currentRow, int currentColumn, int targetRow, int targetColumn)
+void Piece::movePiece(int currentRow, int currentColumn, int targetRow, int targetColumn)
 {
-    // std::ifstream sourceFile("../piece_info.txt");
-    // std::ofstream destinationFile("../move_pieces.txt");
-    // std::string line;
-    // for (int i = 0; i < 8; i++)
-    // {
-    //     for (int j = 0; j < 8; j++)
-    //     {
-    //         std::getline(sourceFile, line);
-    //         std::istringstream ss(line);
+    std::ifstream sourceFile("../pieces_info.txt");
+    std::string line;
 
-    //         int row, col;
-    //         std::string pieceType;
-    //         bool pieceColor;
-    //         std::string pieceIdentifier;
+    while (std::getline(sourceFile, line))
+    {
+        std::istringstream ss(line);
 
-    //         ss >> row;
-    //         ss.ignore(1, ',');
+        int row, col;
+        std::string pieceType;
+        bool pieceColor;
+        std::string pieceIdentifier;
 
-    //         ss >> col;
-    //         ss.ignore(1, ',');
+        ss >> row;
+        ss.ignore(1, ',');
 
-    //         std::getline(ss, pieceType, ',');
-    //         // if (ss.fail())
-    //             // continue;
+        ss >> col;
+        ss.ignore(1, ',');
 
-    //         ss >> std::boolalpha >> pieceColor;
-    //         // if (ss.fail() || ss.peek() != ',')
-    //             // continue;
-    //         ss.ignore(1, ',');
+        std::getline(ss, pieceType, ',');
+        if (ss.fail())
+            continue;
 
-    //         std::getline(ss, pieceIdentifier);
-    //         // if (ss.fail())
-    //             // continue;
+        ss >> pieceColor;
+        if (ss.fail())
+            continue;
+        ss.ignore(1, ',');
 
-    //         pieceType = pieceType.substr(pieceType.find_first_not_of(" \t"));
-    //         pieceIdentifier = pieceIdentifier.substr(pieceIdentifier.find_first_not_of(" \t"));
+        std::getline(ss, pieceIdentifier);
+        if (ss.fail())
+            continue;
 
-    //         if (row == currentRow && col == currentColumn)
-    //         {
-    //             destinationFile << row << ',' << column << ',' << ',' << ',' << std::endl;
-    //             this->pType = pieceType;
-    //             this->pColor = pieceColor;
-    //             this->pIdentifier = pieceIdentifier;
-    //         }
-    //         else{
-    //             destinationFile << row << ',' << column << ',' << pieceType << ',' << pieceColor << ',' << pieceIdentifier << std::endl;
-    //         }
-            
-    //     }
-    // }
-    // sourceFile.close();
-    // destinationFile.close();
-    // std::filesystem::remove("../piece_info.txt");
-    // std::filesystem::rename("../move_pieces.txt", "../piece_info.txt");
+        pieceType = pieceType.substr(pieceType.find_first_not_of(" \t"));
+        pieceIdentifier = pieceIdentifier.substr(pieceIdentifier.find_first_not_of(" \t"));
 
-    // std::ifstream csourceFile("../piece_info.txt");
-    // std::ofstream cdestinationFile("../move_pieces.txt");
-    // std::string cline;
-    // for (int i = 0; i < 8; i++)
-    // {
-    //     for (int j = 0; j < 8; j++)
-    //     {
-    //         std::getline(csourceFile, cline);
-    //         std::istringstream ss(cline);
+        if (row == currentRow && col == currentColumn)
+        {
+            this->pType = pieceType;
+            this->pColor = pieceColor;
+            this->pIdentifier = pieceIdentifier;
+            break;
+        }
+    }
+    sourceFile.close();
 
-    //         int row, col;
-    //         std::string pieceType;
-    //         bool pieceColor;
-    //         std::string pieceIdentifier;
+    std::ifstream csourceFile("../pieces_info.txt");
+    std::ofstream cdestinationFile("../move_pieces.txt");
+    std::string cline;
 
-    //         ss >> row;
-    //         ss.ignore(1, ',');
+    while (std::getline(csourceFile, cline))
+    {
+        std::istringstream sscord(cline);
 
-    //         ss >> col;
-    //         ss.ignore(1, ',');
+        int row, col;
 
-    //         std::getline(ss, pieceType, ',');
-    //         // if (ss.fail())
-    //             // continue;
+        sscord >> row;
+        sscord.ignore(1, ',');
 
-    //         ss >> std::boolalpha >> pieceColor;
-    //         // if (ss.fail() || ss.peek() != ',')
-    //             // continue;
-    //         ss.ignore(1, ',');
+        sscord >> col;
+        sscord.ignore(1, ',');
 
-    //         std::getline(ss, pieceIdentifier);
-    //         // if (ss.fail())
-    //             // continue;
+        if (row == targetRow && col == targetColumn)
+        {
+            cdestinationFile << row << ',' << col << ',' << this->pType << ',' << this->pColor << ',' << this->pIdentifier << std::endl;
+        }
+        else if (row == currentRow && col == currentColumn)
+        {
+            cdestinationFile << row << ',' << col << ',' << ',' << ',' << std::endl;
+        }
+        else
+        {
+            cdestinationFile << cline << std::endl;
+        }
+    }
+    csourceFile.close();
+    cdestinationFile.close();
+    std::filesystem::remove("../pieces_info.txt");
+    std::filesystem::rename("../move_pieces.txt", "../pieces_info.txt");
 
-    //         pieceType = pieceType.substr(pieceType.find_first_not_of(" \t"));
-    //         pieceIdentifier = pieceIdentifier.substr(pieceIdentifier.find_first_not_of(" \t"));
+    std::ifstream dsourceFile("../active_tiles.txt");
+    std::ofstream ddestinationFile("../reset.txt");
+    std::string dline;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            std::getline(dsourceFile, dline);
+            std::istringstream ssd(dline);
 
-    //         if (row == targetRow && col == targetColumn)
-    //         {
-    //             cdestinationFile << row << ',' << column << ',' << this->pType << ',' << this->pColor << ',' << this->pIdentifier << std::endl;
-    //         }
-    //         else{
-    //             cdestinationFile << row << ',' << column << ',' << pieceType << ',' << pieceColor << ',' << pieceIdentifier << std::endl;
-    //         }
-            
-    //     }
-    // }
-    // csourceFile.close();
-    // cdestinationFile.close();
-    // std::filesystem::remove("../piece_info.txt");
-    // std::filesystem::rename("../move_pieces.txt", "../piece_info.txt");
+            int num1, num2, num3;
+            char delimiter1, delimiter2;
+
+            ssd >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3;
+
+            ddestinationFile << num1 << ',' << num2 << ',' << 0 << std::endl;
+        }
+    }
+    
+    dsourceFile.close();
+    ddestinationFile.close();
+    std::filesystem::remove("../active_tiles.txt");
+    std::filesystem::rename("../reset.txt", "../active_tiles.txt");
 }

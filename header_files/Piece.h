@@ -33,6 +33,7 @@ protected:
     sf::Texture texture;
     sf::Sprite sprite;
 
+    
     std::string pType;
     bool pColor;
     std::string pIdentifier;
@@ -41,7 +42,9 @@ public:
     Piece(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target);
     virtual ~Piece();
 
-    void move(int currentRow, int currentColumn, int targetRow, int targetColumn);
+    void movePiece(int currentRow, int currentColumn, int targetRow, int targetColumn);
+    
     virtual void update(const sf::Vector2f mousePos) = 0;
     virtual void render(sf::RenderTarget *target) = 0;
+    virtual void possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray) = 0;
 };

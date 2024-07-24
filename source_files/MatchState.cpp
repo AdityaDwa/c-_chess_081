@@ -11,6 +11,11 @@ MatchState::MatchState(sf::RenderWindow *window) : State(window)
             this->boardPieces[i][j] = nullptr;
         }
     }
+
+    for (int i = 0; i < 30; i++)
+    {
+        this->btns[i] = nullptr;
+    }
 }
 
 MatchState::~MatchState()
@@ -22,6 +27,12 @@ MatchState::~MatchState()
             delete this->boardPieces[i][j];
             this->boardPieces[i][j] = nullptr;
         }
+    }
+
+    for (int i = 0; i < 30; i++)
+    {
+        delete this->btns[i];
+        this->btns[i] = nullptr;
     }
 }
 
@@ -37,6 +48,14 @@ void MatchState::update(const float &deltaTime)
             {
                 this->boardPieces[i][j]->update(this->mousePosView);
             }
+        }
+    }
+
+    for (int i = 0; i < 30; i++)
+    {
+        if (this->btns[i] != nullptr)
+        {
+            this->btns[i]->update(this->mousePosView);
         }
     }
 }
@@ -116,8 +135,8 @@ void MatchState::renderPieces(sf::RenderTarget *target)
             if (ss.fail())
                 continue;
 
-            ss >> std::boolalpha >> pieceColor;
-            if (ss.fail() || ss.peek() != ',')
+            ss >> pieceColor;
+            if (ss.fail())
                 continue;
             ss.ignore(1, ',');
 
@@ -130,46 +149,86 @@ void MatchState::renderPieces(sf::RenderTarget *target)
 
             sscoord >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3;
 
-            sf::Color color = num3 ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0); 
+            sf::Color color = num3 ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0);
             if (num3)
             {
-                delete this->boardPieces[3][3];
-                this->boardPieces[3][3] = new Pawn(true, 3, 3, color, target);
-                this->boardPieces[3][3]->render(target);
-                // this->boardPieces[i][j]->move(i, j, 4, 4);
-            }
-            
+                std::vector<std::vector<int>> moveArray = {};
+                this->boardPieces[row][col]->possibleMoves(row, col, pieceColor, moveArray);
 
-            delete this->boardPieces[i][j];
+                int i = 0;
+                for (const auto &pair : moveArray)
+                {
+                    delete this->btns[i];
+                    int x = pair[0];
+                    int y = pair[1];
+                    this->btns[i] = new Button(x, y, row, col, target);
+                    this->btns[i]->render(target);
+                    i++;
+                }
+            }
+
+            delete this->boardPieces[row][col];
             if (pieceType == "pawn")
             {
-                this->boardPieces[i][j] = new Pawn(pieceColor, row, col, color, target);
+                this->boardPieces[row][col] = new Pawn(pieceColor, row, col, color, target);
             }
             else if (pieceType == "bishop")
             {
-                this->boardPieces[i][j] = new Bishop(pieceColor, row, col, color, target);
+                this->boardPieces[row][col] = new Bishop(pieceColor, row, col, color, target);
             }
             else if (pieceType == "knight")
             {
-                this->boardPieces[i][j] = new Knight(pieceColor, row, col, color, target);
+                this->boardPieces[row][col] = new Knight(pieceColor, row, col, color, target);
             }
             else if (pieceType == "rook")
             {
-                this->boardPieces[i][j] = new Rook(pieceColor, row, col, color, target);
+                this->boardPieces[row][col] = new Rook(pieceColor, row, col, color, target);
             }
             else if (pieceType == "queen")
             {
-                this->boardPieces[i][j] = new Queen(pieceColor, row, col, color, target);
+                this->boardPieces[row][col] = new Queen(pieceColor, row, col, color, target);
             }
             else
             {
-                this->boardPieces[i][j] = new King(pieceColor, row, col, color, target);
+                this->boardPieces[row][col] = new King(pieceColor, row, col, color, target);
             }
 
-            this->boardPieces[i][j]->render(target);
+            this->boardPieces[row][col]->render(target);
         }
     }
 
     file.close();
     sourceFile.close();
+
+    std::ifstream filegone("../isClickedOn.txt");
+    std::string liner;
+    while (std::getline(filegone, liner))
+    {
+        std::istringstream jss(liner);
+        int initialRow, initialColumn, finalRow, finalColumn, moveFlag;
+        char delimiter1, delimiter2, delimiter3, delimiter4;
+        jss >> initialRow >> delimiter1 >> initialColumn >> delimiter2 >> finalRow >> delimiter3 >> finalColumn >> delimiter4 >> moveFlag;
+        if (moveFlag)
+        {
+            // std::ofstream test("../logs/templog.txt");
+            // test << "i am working" << r << c << f;
+            // test.close();
+
+            if (this->boardPieces[initialRow][initialColumn] != nullptr)
+            {
+                this->boardPieces[initialRow][initialColumn]->movePiece(initialRow, initialColumn, finalRow, finalColumn);
+                delete this->boardPieces[initialRow][initialColumn];
+                this->boardPieces[initialRow][initialColumn] = nullptr;
+                for (int i = 0; i < 30; i++)
+                {
+                    delete this->btns[i];
+                    this->btns[i] = nullptr;
+                }
+            }
+        }
+    }
+    filegone.close();
+
+    std::ofstream vacancy("../isClickedOn.txt");
+    vacancy.close();
 }

@@ -12,5 +12,6 @@ public:
 
     void update(const sf::Vector2f mousePos);
     void render(sf::RenderTarget *target);
+    void possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray);
 };
 

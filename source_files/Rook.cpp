@@ -84,3 +84,34 @@ void Rook::render(sf::RenderTarget *target)
     target->draw(this->buttonShape);
     target->draw(this->sprite);
 }
+
+void Rook::possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>> &moveArray)
+{
+    int i = 1;
+    while ((column + i) < 8)
+    {
+        moveArray.push_back({row, column + i});
+        i++;
+    }
+
+    int j = 1;
+    while ((column - j) >= 0)
+    {
+        moveArray.push_back({row, column - j});
+        j++;
+    }
+
+    int k = 1;
+    while ((row + k) < 8)
+    {
+        moveArray.push_back({row + k, column});
+        k++;
+    }
+
+    int l = 1;
+    while ((row - l) >= 0)
+    {
+        moveArray.push_back({row - l, column});
+        l++;
+    }
+}

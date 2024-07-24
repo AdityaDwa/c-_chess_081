@@ -8,11 +8,13 @@
 #include "Rook.h"
 #include "Queen.h"
 #include "King.h"
+#include "Button.h"
 
 class MatchState : public State
 {
 private:
     Piece* boardPieces[8][8];
+    Button* btns[30];
     
 public:
     MatchState(sf::RenderWindow *window);

@@ -34,10 +34,10 @@ public:
     State(sf::RenderWindow *window);
     virtual ~State();
 
-    const bool& isStateQuit() const;
+    const bool &isStateQuit() const;
     virtual void updateMousePositions();
 
-    virtual void update(const float& deltaTime) = 0;
+    virtual void update(const float &deltaTime) = 0;
     virtual void render(sf::RenderTarget *target = nullptr) = 0;
     virtual void endState() = 0;
 };
