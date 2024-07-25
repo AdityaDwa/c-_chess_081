@@ -1,7 +1,46 @@
 #include "../header_files/Button.h"
 
-Button::Button(int row, int column, int parentRow, int parentColumn, sf::RenderTarget *target)
+Button::Button(int row, int column, int parentRow, int parentColumn, bool parentColor, sf::RenderTarget *target)
 {
+    bool targetColor = parentColor;
+    std::ifstream sourceFile("../pieces_info.txt");
+    std::string line;
+
+    while (std::getline(sourceFile, line))
+    {
+        std::istringstream ss(line);
+
+        int r, c;
+        std::string pieceType;
+        bool pieceColor;
+        std::string pieceIdentifier;
+
+        ss >> r;
+        ss.ignore(1, ',');
+
+        ss >> c;
+        ss.ignore(1, ',');
+
+        std::getline(ss, pieceType, ',');
+        if (ss.fail())
+            continue;
+
+        ss >> pieceColor;
+        if (ss.fail())
+            continue;
+        ss.ignore(1, ',');
+
+        std::getline(ss, pieceIdentifier);
+        if (ss.fail())
+            continue;
+
+        if (r == row && c == column)
+        {
+            targetColor = pieceColor;
+        }
+    }
+    sourceFile.close();
+
     this->selfRow = row;
     this->selfColumn = column;
     this->parentRow = parentRow;
@@ -14,7 +53,14 @@ Button::Button(int row, int column, int parentRow, int parentColumn, sf::RenderT
     this->buttonShape.setSize(sf::Vector2f(120.f, 120.f));
     this->buttonShape.setFillColor(sf::Color(0, 0, 0, 0));
 
-    this->texture.loadFromFile("../src/checkpawn.png");
+    if (targetColor != parentColor)
+    {
+        this->texture.loadFromFile("../src/capture_tile.png");
+    }
+    else
+    {
+        this->texture.loadFromFile("../src/movable_tile.png");
+    }
 
     this->texture.setSmooth(true);
     this->sprite.setTexture(this->texture);

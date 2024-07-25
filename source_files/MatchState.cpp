@@ -149,7 +149,7 @@ void MatchState::renderPieces(sf::RenderTarget *target)
 
             sscoord >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3;
 
-            sf::Color color = num3 ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0);
+            sf::Color btnColor = num3 ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0);
             if (num3)
             {
                 std::vector<std::vector<int>> moveArray = {};
@@ -161,36 +161,44 @@ void MatchState::renderPieces(sf::RenderTarget *target)
                     delete this->btns[i];
                     int x = pair[0];
                     int y = pair[1];
-                    this->btns[i] = new Button(x, y, row, col, target);
+                    this->btns[i] = new Button(x, y, row, col, pieceColor, target);
                     this->btns[i]->render(target);
                     i++;
                 }
             }
 
+            std::string imageColor = pieceColor ? "white" : "black";
+
             delete this->boardPieces[row][col];
             if (pieceType == "pawn")
             {
-                this->boardPieces[row][col] = new Pawn(pieceColor, row, col, color, target);
+                std::string imagePath = "../src/" + imageColor + "_pawn.png";  
+                this->boardPieces[row][col] = new Pawn(pieceColor, row, col, btnColor, imagePath, target);
             }
             else if (pieceType == "bishop")
             {
-                this->boardPieces[row][col] = new Bishop(pieceColor, row, col, color, target);
+                std::string imagePath = "../src/" + imageColor + "_bishop.png";
+                this->boardPieces[row][col] = new Bishop(pieceColor, row, col, btnColor, imagePath, target);
             }
             else if (pieceType == "knight")
             {
-                this->boardPieces[row][col] = new Knight(pieceColor, row, col, color, target);
+                std::string imagePath = "../src/" + imageColor + "_knight.png";
+                this->boardPieces[row][col] = new Knight(pieceColor, row, col, btnColor, imagePath, target);
             }
             else if (pieceType == "rook")
             {
-                this->boardPieces[row][col] = new Rook(pieceColor, row, col, color, target);
+                std::string imagePath = "../src/" + imageColor + "_rook.png";
+                this->boardPieces[row][col] = new Rook(pieceColor, row, col, btnColor, imagePath, target);
             }
             else if (pieceType == "queen")
             {
-                this->boardPieces[row][col] = new Queen(pieceColor, row, col, color, target);
+                std::string imagePath = "../src/" + imageColor + "_queen.png";
+                this->boardPieces[row][col] = new Queen(pieceColor, row, col, btnColor, imagePath, target);
             }
             else
             {
-                this->boardPieces[row][col] = new King(pieceColor, row, col, color, target);
+                std::string imagePath = "../src/" + imageColor + "_king.png";
+                this->boardPieces[row][col] = new King(pieceColor, row, col, btnColor, imagePath, target);
             }
 
             this->boardPieces[row][col]->render(target);
@@ -219,11 +227,25 @@ void MatchState::renderPieces(sf::RenderTarget *target)
                 this->boardPieces[initialRow][initialColumn]->movePiece(initialRow, initialColumn, finalRow, finalColumn);
                 delete this->boardPieces[initialRow][initialColumn];
                 this->boardPieces[initialRow][initialColumn] = nullptr;
+                
                 for (int i = 0; i < 30; i++)
                 {
                     delete this->btns[i];
                     this->btns[i] = nullptr;
                 }
+
+                bool turnNum, inverseTurn;
+                std::ifstream filler("../turn.txt");
+                std::ofstream turnChangeptr("../tempturn.txt");
+                
+                filler >> turnNum;
+                inverseTurn = !turnNum;
+                turnChangeptr << inverseTurn;
+
+                filler.close();
+                turnChangeptr.close();
+                std::filesystem::remove("../turn.txt");
+                std::filesystem::rename("../tempturn.txt", "../turn.txt");
             }
         }
     }

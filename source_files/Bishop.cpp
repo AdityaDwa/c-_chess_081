@@ -1,101 +1,69 @@
 #include "../header_files/Bishop.h"
 
-Bishop::Bishop(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target) : Piece(pieceColor, row, column, btnColor, target)
+Bishop::Bishop(bool pieceColor, int row, int column, sf::Color btnColor, std::string imagePath, sf::RenderTarget *target) : Piece(pieceColor, row, column, btnColor, imagePath, target)
 {
-    this->row = row;
-    this->column = column;
-    this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
-    this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
-
-    this->buttonShape.setPosition(sf::Vector2f(this->xPosition, this->yPosition));
-    this->buttonShape.setSize(sf::Vector2f(120.f, 120.f));
-    this->buttonShape.setFillColor(btnColor);
-
-    if (pieceColor)
-    {
-        this->texture.loadFromFile("../src/white_bishop.png");
-    }
-    else
-    {
-        this->texture.loadFromFile("../src/black_bishop.png");
-    }
-
-    this->texture.setSmooth(true);
-    this->sprite.setTexture(this->texture);
-
-    float scaleX = 120.f / this->sprite.getLocalBounds().width;
-    float scaleY = 120.f / this->sprite.getLocalBounds().height;
-
-    this->sprite.setScale(scaleX, scaleY);
-    this->sprite.setPosition(this->xPosition, this->yPosition);
 }
 
 Bishop::~Bishop()
 {
 }
 
-void Bishop::update(const sf::Vector2f mousePos)
+void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>> &moveArray)
 {
-    static sf::Clock debounceClock;
-    const sf::Time debounceTime = sf::milliseconds(200);
+    std::vector<std::vector<std::string>> boardState = this->readBoardState();
 
-    if (this->buttonShape.getGlobalBounds().contains(mousePos))
-    {
-        bool isPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-        if (isPressed && debounceClock.getElapsedTime() > debounceTime)
-        {
-            std::ifstream sourceFile("../active_tiles.txt");
-            std::ofstream destinationFile("../modifying_tiles.txt");
-            std::string line;
-
-            for (int i = 0; i < 8; ++i)
-            {
-                for (int j = 0; j < 8; ++j)
-                {
-                    std::getline(sourceFile, line);
-                    std::istringstream ss(line);
-
-                    int num1, num2, num3;
-                    char delimiter1, delimiter2;
-
-                    if (ss >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3)
-                    {
-                        if (num1 == this->row && num2 == this->column)
-                        {
-                            num3 = !num3;
-                        }
-                    }
-
-                    destinationFile << num1 << ',' << num2 << ',' << num3 << std::endl;
-                }
-            }
-            sourceFile.close();
-            destinationFile.close();
-            std::filesystem::remove("../active_tiles.txt");
-            std::filesystem::rename("../modifying_tiles.txt", "../active_tiles.txt");
-
-            debounceClock.restart();
-        }
-    }
-}
-
-void Bishop::render(sf::RenderTarget *target)
-{
-    target->draw(this->buttonShape);
-    target->draw(this->sprite);
-}
-
-void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray){
     int i = 1;
     while (((row + i) < 8) && ((column + i) < 8))
     {
+        if (!boardState[row + i][column + i].empty())
+        {
+            std::stringstream ss(boardState[row + i][column + i]);
+
+            std::string piece;
+            int color;
+
+            std::getline(ss, piece, ',');
+            ss >> color;
+
+            if (color == pieceColor)
+            {
+                break;
+            }
+            else
+            {
+                moveArray.push_back({row + i, column + i});
+                break;
+            }
+        }
+
         moveArray.push_back({row + i, column + i});
         i++;
     }
-    
+
     int j = 1;
     while (((row + j) < 8) && ((column - j) >= 0))
     {
+        if (!boardState[row + j][column - j].empty())
+        {
+            std::stringstream ss(boardState[row + j][column - j]);
+
+            std::string piece;
+            int color;
+
+            std::getline(ss, piece, ',');
+            ss >> color;
+
+            if (color == pieceColor)
+            {
+                break;
+            }
+            else
+            {
+                moveArray.push_back({row + j, column - j});
+                break;
+            }
+        }
+
         moveArray.push_back({row + j, column - j});
         j++;
     }
@@ -103,6 +71,27 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
     int k = 1;
     while (((row - k) >= 0) && ((column + k) < 8))
     {
+        if (!boardState[row - k][column + k].empty())
+        {
+            std::stringstream ss(boardState[row - k][column + k]);
+
+            std::string piece;
+            int color;
+
+            std::getline(ss, piece, ',');
+            ss >> color;
+
+            if (color == pieceColor)
+            {
+                break;
+            }
+            else
+            {
+                moveArray.push_back({row - k, column + k});
+                break;
+            }
+        }
+
         moveArray.push_back({row - k, column + k});
         k++;
     }
@@ -110,7 +99,32 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
     int l = 1;
     while (((row - l) >= 0) && ((column - l) >= 0))
     {
+        if (!boardState[row - l][column - l].empty())
+        {
+            std::stringstream ss(boardState[row - l][column - l]);
+
+            std::string piece;
+            int color;
+
+            std::getline(ss, piece, ',');
+            ss >> color;
+            
+            if (color == pieceColor)
+            {
+                break;
+            }
+            else
+            {
+                moveArray.push_back({row - l, column - l});
+                break;
+            }
+        }
+
         moveArray.push_back({row - l, column - l});
         l++;
     }
+}
+
+void Bishop::filterValidMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>> &moveArray, const std::vector<std::vector<std::string>> &boardState)
+{
 }

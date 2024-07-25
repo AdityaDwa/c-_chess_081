@@ -33,7 +33,7 @@ protected:
     sf::Sprite sprite;
 
 public:
-    Button(int row, int column, int parentRow, int parentColumn, sf::RenderTarget *target);
+    Button(int row, int column, int parentRow, int parentColumn, bool parentColor, sf::RenderTarget *target);
     virtual ~Button();
 
     void update(const sf::Vector2f mousePos);

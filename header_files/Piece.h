@@ -39,12 +39,15 @@ protected:
     std::string pIdentifier;
 
 public:
-    Piece(bool pieceColor, int row, int column, sf::Color btnColor, sf::RenderTarget *target);
+    Piece(bool pieceColor, int row, int column, sf::Color btnColor, std::string imagePath, sf::RenderTarget *target);
     virtual ~Piece();
 
     void movePiece(int currentRow, int currentColumn, int targetRow, int targetColumn);
-    
-    virtual void update(const sf::Vector2f mousePos) = 0;
-    virtual void render(sf::RenderTarget *target) = 0;
+    std::vector<std::vector<std::string>> readBoardState();
+
+    void update(const sf::Vector2f mousePos);
+    void render(sf::RenderTarget *target);
+
     virtual void possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray) = 0;
+    virtual void filterValidMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray, const std::vector<std::vector<std::string>>& boardState) = 0;
 };

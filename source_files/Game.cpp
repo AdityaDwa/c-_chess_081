@@ -118,4 +118,9 @@ void Game::endApplication()
 
     std::ofstream vacancy("../isClickedOn.txt");
     vacancy.close();
+
+    std::ofstream filler("../turn.txt");
+    int turn = 1;
+    filler << turn;
+    filler.close();
 }
