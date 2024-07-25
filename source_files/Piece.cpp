@@ -175,6 +175,12 @@ void Piece::update(const sf::Vector2f mousePos)
     bool turnNum;
     filler >> turnNum;
     filler.close();
+
+    // std::ofstream test("../logs/templog.txt");
+    // std::string player = turnNum ? "White" : "Black";
+    // test << player << " turn";
+    // test.close();
+    
     if (turnNum == this->pieceColor)
     {
         static sf::Clock debounceClock;

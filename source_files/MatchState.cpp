@@ -172,7 +172,7 @@ void MatchState::renderPieces(sf::RenderTarget *target)
             delete this->boardPieces[row][col];
             if (pieceType == "pawn")
             {
-                std::string imagePath = "../src/" + imageColor + "_pawn.png";  
+                std::string imagePath = "../src/" + imageColor + "_pawn.png";
                 this->boardPieces[row][col] = new Pawn(pieceColor, row, col, btnColor, imagePath, target);
             }
             else if (pieceType == "bishop")
@@ -208,6 +208,166 @@ void MatchState::renderPieces(sf::RenderTarget *target)
     file.close();
     sourceFile.close();
 
+    int blackKingCorrd[2];
+    int whiteKingCorrd[2];
+    std::ifstream kingfile("../pieces_info.txt");
+    std::string kingline;
+    while (std::getline(kingfile, kingline))
+    {
+        std::istringstream ssking(kingline);
+        int x, y;
+        std::string pisType;
+        bool pisColor;
+        std::string pisIdentifier;
+
+        ssking >> x;
+        ssking.ignore(1, ',');
+
+        ssking >> y;
+        ssking.ignore(1, ',');
+
+        std::getline(ssking, pisType, ',');
+        if (ssking.fail())
+            continue;
+
+        ssking >> pisColor;
+        if (ssking.fail())
+            continue;
+        ssking.ignore(1, ',');
+
+        std::getline(ssking, pisIdentifier);
+        if (ssking.fail())
+            continue;
+
+        pisType = pisType.substr(pisType.find_first_not_of(" \t"));
+        pisIdentifier = pisIdentifier.substr(pisIdentifier.find_first_not_of(" \t"));
+
+        if (pisType == "king")
+        {
+            if (pisColor)
+            {
+                whiteKingCorrd[0] = x;
+                whiteKingCorrd[1] = y;
+            }
+            else
+            {
+                blackKingCorrd[0] = x;
+                blackKingCorrd[1] = y;
+            }
+        }
+    }
+    kingfile.close();
+
+    std::vector<std::vector<int>> whitePossibleMoves = {};
+    std::vector<std::vector<int>> blackPossibleMoves = {};
+
+    std::ifstream piecefile("../pieces_info.txt");
+    std::string pieceline;
+    while (std::getline(piecefile, pieceline))
+    {
+        std::istringstream sspiece(pieceline);
+        int x, y;
+        std::string pisType;
+        bool pisColor;
+        std::string pisIdentifier;
+
+        sspiece >> x;
+        sspiece.ignore(1, ',');
+
+        sspiece >> y;
+        sspiece.ignore(1, ',');
+
+        std::getline(sspiece, pisType, ',');
+        if (sspiece.fail())
+            continue;
+
+        sspiece >> pisColor;
+        if (sspiece.fail())
+            continue;
+        sspiece.ignore(1, ',');
+
+        std::getline(sspiece, pisIdentifier);
+        if (sspiece.fail())
+            continue;
+
+        if (pisColor)
+        {
+            this->boardPieces[x][y]->possibleMoves(x, y, pisColor, whitePossibleMoves);
+        }
+        else
+        {
+            this->boardPieces[x][y]->possibleMoves(x, y, pisColor, blackPossibleMoves);
+        }
+    }
+    piecefile.close();
+
+    bool whiteKingCheckFlag = 0;
+    bool blackKingCheckFlag = 0;
+
+    for (const auto &bpair : blackPossibleMoves)
+    {
+        int xMove = bpair[0];
+        int yMove = bpair[1];
+        if (whiteKingCorrd[0] == xMove && whiteKingCorrd[1] == yMove)
+        {
+            whiteKingCheckFlag = 1;
+        }
+    }
+
+    for (const auto &wpair : whitePossibleMoves)
+    {
+        int xMove = wpair[0];
+        int yMove = wpair[1];
+        if (blackKingCorrd[0] == xMove && blackKingCorrd[1] == yMove)
+        {
+            blackKingCheckFlag = 1;
+        }
+    }
+
+    bool whoseTurn;
+    std::ifstream turner("../turn.txt");
+    turner >> whoseTurn;
+    whoseTurn = !whoseTurn;
+    turner.close();
+
+    if ((whoseTurn && whiteKingCheckFlag) || (!whoseTurn && blackKingCheckFlag))
+    {
+        std::ifstream winfile("../ongoing_piece_info.txt");
+        std::ofstream woutfile("../pieces_info.txt");
+        std::string wline;
+
+        while (std::getline(winfile, wline))
+        {
+            woutfile << wline << std::endl;
+        }
+        winfile.close();
+        woutfile.close();
+
+        bool turnNum, inverseTurn;
+        std::ifstream filler("../turn.txt");
+        std::ofstream turnChangeptr("../tempturn.txt");
+
+        filler >> turnNum;
+        inverseTurn = !turnNum;
+        turnChangeptr << inverseTurn;
+
+        filler.close();
+        turnChangeptr.close();
+        std::filesystem::remove("../turn.txt");
+        std::filesystem::rename("../tempturn.txt", "../turn.txt");
+    }
+
+    std::ifstream winnerfile("../pieces_info.txt");
+    std::ofstream woutnerfile("../ongoing_piece_info.txt");
+    std::string winnerline;
+
+    while (std::getline(winnerfile, winnerline))
+    {
+        woutnerfile << winnerline << std::endl;
+    }
+    winnerfile.close();
+    woutnerfile.close();
+
     std::ifstream filegone("../isClickedOn.txt");
     std::string liner;
     while (std::getline(filegone, liner))
@@ -218,16 +378,12 @@ void MatchState::renderPieces(sf::RenderTarget *target)
         jss >> initialRow >> delimiter1 >> initialColumn >> delimiter2 >> finalRow >> delimiter3 >> finalColumn >> delimiter4 >> moveFlag;
         if (moveFlag)
         {
-            // std::ofstream test("../logs/templog.txt");
-            // test << "i am working" << r << c << f;
-            // test.close();
-
             if (this->boardPieces[initialRow][initialColumn] != nullptr)
             {
                 this->boardPieces[initialRow][initialColumn]->movePiece(initialRow, initialColumn, finalRow, finalColumn);
                 delete this->boardPieces[initialRow][initialColumn];
                 this->boardPieces[initialRow][initialColumn] = nullptr;
-                
+
                 for (int i = 0; i < 30; i++)
                 {
                     delete this->btns[i];
@@ -237,7 +393,7 @@ void MatchState::renderPieces(sf::RenderTarget *target)
                 bool turnNum, inverseTurn;
                 std::ifstream filler("../turn.txt");
                 std::ofstream turnChangeptr("../tempturn.txt");
-                
+
                 filler >> turnNum;
                 inverseTurn = !turnNum;
                 turnChangeptr << inverseTurn;

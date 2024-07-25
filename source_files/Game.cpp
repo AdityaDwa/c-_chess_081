@@ -123,4 +123,15 @@ void Game::endApplication()
     int turn = 1;
     filler << turn;
     filler.close();
+
+    std::ifstream winfile("../pieces_info.txt");
+    std::ofstream woutfile("../ongoing_piece_info.txt");
+    std::string wline;
+
+    while (std::getline(winfile, wline))
+    {
+        woutfile << wline << std::endl;
+    }
+    winfile.close();
+    woutfile.close();
 }
