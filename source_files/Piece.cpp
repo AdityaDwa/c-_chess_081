@@ -5,12 +5,22 @@ Piece::Piece(bool pieceColor, int row, int column, sf::Color btnColor, std::stri
     this->row = row;
     this->column = column;
     this->pieceColor = pieceColor;
-    this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
-    this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
 
-    this->buttonShape.setPosition(sf::Vector2f(this->xPosition, this->yPosition));
-    this->buttonShape.setSize(sf::Vector2f(120.f, 120.f));
-    this->buttonShape.setFillColor(btnColor);
+    bool whoseTurn;
+    std::ifstream turner("../turn.txt");
+    turner >> whoseTurn;
+    turner.close();
+
+    if (whoseTurn)
+    {
+        this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
+        this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
+    }
+    else
+    {
+        this->xPosition = ((target->getSize().x - 960.f) / 2) + (std::abs(row - 7) * 120.f);
+        this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - std::abs(column - 7)) * 120.f);
+    }
 
     this->texture.loadFromFile(imagePath);
     this->texture.setSmooth(true);
@@ -169,27 +179,28 @@ std::vector<std::vector<std::string>> Piece::readBoardState()
     return boardState;
 }
 
-void Piece::update(const sf::Vector2f mousePos)
+void Piece::update()
 {
     std::ifstream filler("../turn.txt");
     bool turnNum;
     filler >> turnNum;
     filler.close();
 
-    // std::ofstream test("../logs/templog.txt");
-    // std::string player = turnNum ? "White" : "Black";
-    // test << player << " turn";
-    // test.close();
-    
     if (turnNum == this->pieceColor)
     {
-        static sf::Clock debounceClock;
-        const sf::Time debounceTime = sf::milliseconds(200);
+        bool clicked;
+        char del1, del2;
+        float mouseX, mouseY;
 
-        if (this->buttonShape.getGlobalBounds().contains(mousePos))
+        std::ifstream test("../mouse_position.txt");
+        test >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+        test.close();
+
+        sf::Vector2f clickPosition(mouseX, mouseY);
+
+        if (clicked)
         {
-            bool isPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-            if (isPressed && debounceClock.getElapsedTime() > debounceTime)
+            if (this->sprite.getGlobalBounds().contains(clickPosition))
             {
                 std::ifstream sourceFile("../active_tiles.txt");
                 std::ofstream destinationFile("../modifying_tiles.txt");
@@ -225,7 +236,9 @@ void Piece::update(const sf::Vector2f mousePos)
                 std::filesystem::remove("../active_tiles.txt");
                 std::filesystem::rename("../modifying_tiles.txt", "../active_tiles.txt");
 
-                debounceClock.restart();
+                std::ofstream idk("../mouse_position.txt");
+                idk << 0 << ',' << 0 << ',' << 0;
+                idk.close();
             }
         }
     }
@@ -233,6 +246,5 @@ void Piece::update(const sf::Vector2f mousePos)
 
 void Piece::render(sf::RenderTarget *target)
 {
-    target->draw(this->buttonShape);
     target->draw(this->sprite);
 }

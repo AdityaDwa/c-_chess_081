@@ -46,12 +46,21 @@ Button::Button(int row, int column, int parentRow, int parentColumn, bool parent
     this->parentRow = parentRow;
     this->parentColumn = parentColumn;
 
-    this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
-    this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
+    bool whoseTurn;
+    std::ifstream turner("../turn.txt");
+    turner >> whoseTurn;
+    turner.close();
 
-    this->buttonShape.setPosition(sf::Vector2f(this->xPosition, this->yPosition));
-    this->buttonShape.setSize(sf::Vector2f(120.f, 120.f));
-    this->buttonShape.setFillColor(sf::Color(0, 0, 0, 0));
+    if (whoseTurn)
+    {
+        this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
+        this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
+    }
+    else
+    {
+        this->xPosition = ((target->getSize().x - 960.f) / 2) + (std::abs(row - 7) * 120.f);
+        this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - std::abs(column - 7)) * 120.f);
+    }
 
     if (targetColor != parentColor)
     {
@@ -76,26 +85,34 @@ Button::~Button()
 {
 }
 
-void Button::update(const sf::Vector2f mousePos)
+void Button::update()
 {
-    static sf::Clock debounceClock;
-    const sf::Time debounceTime = sf::milliseconds(200);
+    bool clicked;
+    char del1, del2;
+    float mouseX, mouseY;
 
-    if (this->buttonShape.getGlobalBounds().contains(mousePos))
+    std::ifstream test("../mouse_position.txt");
+    test >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+    test.close();
+
+    sf::Vector2f clickPosition(mouseX, mouseY);
+
+    if (clicked)
     {
-        bool isPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-        if (isPressed && debounceClock.getElapsedTime() > debounceTime)
+        if (this->sprite.getGlobalBounds().contains(clickPosition))
         {
             std::ofstream filegone("../isClickedOn.txt");
             filegone << parentRow << ',' << parentColumn << ',' << selfRow << ',' << selfColumn << ',' << 1 << std::endl;
             filegone.close();
-            debounceClock.restart();
+
+            std::ofstream idk("../mouse_position.txt");
+            idk << 0 << ',' << 0 << ',' << 0;
+            idk.close();
         }
     }
 }
 
 void Button::render(sf::RenderTarget *target)
 {
-    target->draw(this->buttonShape);
     target->draw(this->sprite);
 }

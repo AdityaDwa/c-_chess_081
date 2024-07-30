@@ -36,6 +36,6 @@ public:
     Button(int row, int column, int parentRow, int parentColumn, bool parentColor, sf::RenderTarget *target);
     virtual ~Button();
 
-    void update(const sf::Vector2f mousePos);
+    void update();
     void render(sf::RenderTarget *target);
 };

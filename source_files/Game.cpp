@@ -2,12 +2,10 @@
 
 void Game::initWindow()
 {
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-    this->window = new sf::RenderWindow(sf::VideoMode(1728, 972), "Chess", sf::Style::Default, settings);
-    // this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen, settings);
+    // this->window = new sf::RenderWindow(sf::VideoMode(1728, 972), "Chess", sf::Style::Default);
+    this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
     this->window->setFramerateLimit(144);
-    this->window->setVerticalSyncEnabled(false);
+    this->window->setVerticalSyncEnabled(true);
 }
 
 void Game::initStates()
@@ -47,6 +45,22 @@ void Game::updateWindow()
         {
             endApplication();
             this->window->close();
+        }
+
+        if (e.type == sf::Event::KeyPressed)
+        {
+            if (e.key.code == sf::Keyboard::Escape)
+            {
+                endApplication();
+                this->window->close();
+            }
+        }
+
+        if (e.type == sf::Event::MouseButtonPressed)
+        {
+            std::ofstream test("../mouse_position.txt");
+            test << 1 << ',' << e.mouseButton.x << ',' << e.mouseButton.y << std::endl;
+            test.close();
         }
     }
 
@@ -120,8 +134,7 @@ void Game::endApplication()
     vacancy.close();
 
     std::ofstream filler("../turn.txt");
-    int turn = 1;
-    filler << turn;
+    filler << 1;
     filler.close();
 
     std::ifstream winfile("../pieces_info.txt");
@@ -134,4 +147,8 @@ void Game::endApplication()
     }
     winfile.close();
     woutfile.close();
+
+    std::ofstream idk("../mouse_position.txt");
+    idk << 0 << ',' << 0 << ',' << 0;
+    idk.close();
 }

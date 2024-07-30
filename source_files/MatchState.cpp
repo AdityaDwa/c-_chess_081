@@ -46,7 +46,7 @@ void MatchState::update(const float &deltaTime)
         {
             if (this->boardPieces[i][j] != nullptr)
             {
-                this->boardPieces[i][j]->update(this->mousePosView);
+                this->boardPieces[i][j]->update();
             }
         }
     }
@@ -55,7 +55,7 @@ void MatchState::update(const float &deltaTime)
     {
         if (this->btns[i] != nullptr)
         {
-            this->btns[i]->update(this->mousePosView);
+            this->btns[i]->update();
         }
     }
 }
@@ -96,6 +96,45 @@ void MatchState::renderBoard(sf::RenderTarget *target)
 
             target->draw(square);
         }
+    }
+
+    this->font.loadFromFile("../fonts/inter_regular.ttf");
+
+    this->xtileLabel.setFont(this->font);
+    this->ytileLabel.setFont(this->font);
+
+    char colLabels[8] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+    char rowLabels[8] = {'8', '7', '6', '5', '4', '3', '2', '1'};
+
+    bool turn;
+    std::ifstream turner("../turn.txt");
+    turner >> turn;
+    turner.close();
+
+    for (int i = 0; i < 8; i++)
+    {
+        int num = turn ? i : std::abs(i - 7);
+        
+        this->xtileLabel.setString(colLabels[num]);
+        this->ytileLabel.setString(rowLabels[num]);
+
+        this->xtileLabel.setCharacterSize(24);
+        this->ytileLabel.setCharacterSize(24);
+
+        this->xtileLabel.setFillColor(sf::Color::Black);
+        this->ytileLabel.setFillColor(sf::Color::Black);
+
+        float colXCoord = startXPosition + (i * 120.f) + 50.f;
+        float colYCoord = startYPosition + (8 * 120.f) + 10.f;
+
+        float rowXCoord = startXPosition - 30.f;
+        float rowYCoord = startYPosition + (i * 120.f) + 50.f;
+
+        this->xtileLabel.setPosition(colXCoord, colYCoord);
+        this->ytileLabel.setPosition(rowXCoord, rowYCoord);
+
+        target->draw(this->xtileLabel);
+        target->draw(this->ytileLabel);
     }
 }
 

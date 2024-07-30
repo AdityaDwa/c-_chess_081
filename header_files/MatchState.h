@@ -15,6 +15,10 @@ class MatchState : public State
 private:
     Piece* boardPieces[8][8];
     Button* btns[30];
+
+    sf::Font font;
+    sf::Text xtileLabel;
+    sf::Text ytileLabel;
     
 public:
     MatchState(sf::RenderWindow *window);

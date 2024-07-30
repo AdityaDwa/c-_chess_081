@@ -29,7 +29,6 @@ protected:
     float xPosition;
     float yPosition;
 
-    sf::RectangleShape buttonShape;
     sf::Texture texture;
     sf::Sprite sprite;
 
@@ -45,7 +44,7 @@ public:
     void movePiece(int currentRow, int currentColumn, int targetRow, int targetColumn);
     std::vector<std::vector<std::string>> readBoardState();
 
-    void update(const sf::Vector2f mousePos);
+    void update();
     void render(sf::RenderTarget *target);
 
     virtual void possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray) = 0;
