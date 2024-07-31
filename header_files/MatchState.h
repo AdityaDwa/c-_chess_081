@@ -14,6 +14,7 @@ class MatchState : public State
 {
 private:
     Piece* boardPieces[8][8];
+    Piece* virtualBoardPieces[8][8];
     Button* btns[30];
 
     sf::Font labelFont;
@@ -26,7 +27,8 @@ private:
     sf::Texture texture;
     sf::Sprite sprite;
     sf::RectangleShape icon;
-    
+
+    bool playerTurn, whiteKingCheckFlag, blackKingCheckFlag;    
 public:
     MatchState(sf::RenderWindow *window);
     virtual ~MatchState();
@@ -38,7 +40,9 @@ public:
     void renderBoard(sf::RenderTarget *target);
     void renderPieces(sf::RenderTarget *target);
     void renderPawnPromoDialog(sf::RenderTarget *target);
+    void renderCheckDialog(sf::RenderTarget *target);
 
     void checkForPawnPromotion();
     void castle(int initialRow, int initialColumn, int finalRow, int finalColumn);
+    void isCheck(sf::RenderTarget *target);
 };

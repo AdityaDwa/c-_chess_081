@@ -70,11 +70,19 @@ void Game::initApplication()
     std::ofstream blackLeftRookCastleFile("../templates/black_left_rook_castle.txt");
     blackLeftRookCastleFile << 0;
     blackLeftRookCastleFile.close();
+
+    std::ofstream checkFlagFile("../templates/check_flag.txt");
+    checkFlagFile << 0 << ',' << 0;
+    checkFlagFile.close();
+
+    std::ofstream newStateFile("../templates/new_state.txt");
+    newStateFile << 0;
+    newStateFile.close();
 }
 
 void Game::initStates()
 {
-    this->stateStack.push(new MatchState(this->window));
+    this->stateStack.push(new MainMenuState(this->window));
 }
 
 Game::Game()
@@ -110,14 +118,6 @@ void Game::updateWindow()
             this->window->close();
         }
 
-        if (e.type == sf::Event::KeyPressed)
-        {
-            if (e.key.code == sf::Keyboard::Escape)
-            {
-                this->window->close();
-            }
-        }
-
         if (e.type == sf::Event::MouseButtonPressed)
         {
             std::ofstream mousePositionFile("../templates/mouse_position.txt");
@@ -130,6 +130,20 @@ void Game::updateWindow()
     {
         this->stateStack.top()->update(this->deltaTime);
 
+        bool newStateGen;
+        std::ifstream newStateFile("../templates/new_state.txt");
+        newStateFile >> newStateGen;
+        newStateFile.close();
+
+        if (newStateGen)
+        {
+            std::ofstream newStateFile_1("../templates/new_state.txt");
+            newStateFile_1 << 0;
+            newStateFile_1.close();
+
+            this->stateStack.push(new MatchState(this->window));
+        }
+        
         if (this->stateStack.top()->isStateQuit())
         {
             this->stateStack.top()->endState();

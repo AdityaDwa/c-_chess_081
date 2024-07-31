@@ -9,6 +9,7 @@ MatchState::MatchState(sf::RenderWindow *window) : State(window)
         for (int j = 0; j < 8; j++)
         {
             this->boardPieces[i][j] = nullptr;
+            this->virtualBoardPieces[i][j] = nullptr;
         }
     }
 
@@ -26,6 +27,9 @@ MatchState::~MatchState()
         {
             delete this->boardPieces[i][j];
             this->boardPieces[i][j] = nullptr;
+
+            delete this->virtualBoardPieces[i][j];
+            this->virtualBoardPieces[i][j] = nullptr;
         }
     }
 
@@ -72,10 +76,12 @@ void MatchState::render(sf::RenderTarget *target)
     this->renderPieces(target);
 
     this->renderPawnPromoDialog(target);
+    this->renderCheckDialog(target);
 }
 
 void MatchState::endState()
 {
+    this->~MatchState();
 }
 
 void MatchState::renderBoard(sf::RenderTarget *target)
@@ -186,6 +192,55 @@ void MatchState::renderBoard(sf::RenderTarget *target)
     this->playerName.setFillColor(sf::Color::Black);
     this->playerName.setPosition(180.f, blackPlayerNamePosition);
     target->draw(this->playerName);
+
+    sf::RectangleShape exitBtn;
+
+    sf::Font exitBtnFont;
+    sf::Text exitBtnText;
+
+    float btnXPosition = target->getSize().x - 205.f;
+    float btnYPosition = 60.f;
+
+    exitBtn.setPosition(sf::Vector2f(btnXPosition, btnYPosition));
+    exitBtn.setSize(sf::Vector2f(185.f, 75.f));
+    exitBtn.setFillColor(sf::Color(169, 169, 169));
+
+    target->draw(exitBtn);
+
+    exitBtnFont.loadFromFile("../fonts/inter_bold.ttf");
+    exitBtnText.setFont(exitBtnFont);
+
+    exitBtnText.setString("Resign");
+    exitBtnText.setCharacterSize(30);
+    exitBtnText.setFillColor(sf::Color::White);
+
+    exitBtnText.setPosition(sf::Vector2f(btnXPosition + 45.f, btnYPosition + 20.f));
+    target->draw(exitBtnText);
+
+    bool clicked;
+    char del1, del2;
+    float mouseX, mouseY;
+
+    std::ifstream mousePositionFile("../templates/mouse_position.txt");
+    mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+    mousePositionFile.close();
+
+    sf::Vector2f clickPosition(mouseX, mouseY);
+
+    if (clicked)
+    {
+        if (exitBtn.getGlobalBounds().contains(clickPosition))
+        {
+            std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
+            mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
+            mousePositionFile_1.close();
+
+            // this->quitState = true;
+            std::ofstream logger("../logs/templog.txt");
+            logger << this->quitState;
+            logger.close();
+        }
+    }
 }
 
 void MatchState::renderPieces(sf::RenderTarget *target)
@@ -296,168 +351,6 @@ void MatchState::renderPieces(sf::RenderTarget *target)
 
     currentPositionFile.close();
     activeTileInfoFile.close();
-
-    int blackKingCorrd[2];
-    int whiteKingCorrd[2];
-    std::ifstream currentPositionFile_1("../templates/current_piece_position.txt");
-    std::string infoLine_1;
-
-    while (std::getline(currentPositionFile_1, infoLine_1))
-    {
-        std::istringstream infoString_1(infoLine_1);
-        int x, y;
-        std::string pisType;
-        bool pisColor;
-        std::string pisIdentifier;
-
-        infoString_1 >> x;
-        infoString_1.ignore(1, ',');
-
-        infoString_1 >> y;
-        infoString_1.ignore(1, ',');
-
-        std::getline(infoString_1, pisType, ',');
-        if (infoString_1.fail())
-            continue;
-
-        infoString_1 >> pisColor;
-        if (infoString_1.fail())
-            continue;
-        infoString_1.ignore(1, ',');
-
-        std::getline(infoString_1, pisIdentifier);
-        if (infoString_1.fail())
-            continue;
-
-        pisType = pisType.substr(pisType.find_first_not_of(" \t"));
-        pisIdentifier = pisIdentifier.substr(pisIdentifier.find_first_not_of(" \t"));
-
-        if (pisType == "king")
-        {
-            if (pisColor)
-            {
-                whiteKingCorrd[0] = x;
-                whiteKingCorrd[1] = y;
-            }
-            else
-            {
-                blackKingCorrd[0] = x;
-                blackKingCorrd[1] = y;
-            }
-        }
-    }
-    currentPositionFile_1.close();
-
-    std::vector<std::vector<int>> whitePossibleMoves = {};
-    std::vector<std::vector<int>> blackPossibleMoves = {};
-
-    std::ifstream currentPositionFile_2("../templates/current_piece_position.txt");
-    std::string infoLine_2;
-
-    while (std::getline(currentPositionFile_2, infoLine_2))
-    {
-        std::istringstream infoString_2(infoLine_2);
-        int x, y;
-        std::string pisType;
-        bool pisColor;
-        std::string pisIdentifier;
-
-        infoString_2 >> x;
-        infoString_2.ignore(1, ',');
-
-        infoString_2 >> y;
-        infoString_2.ignore(1, ',');
-
-        std::getline(infoString_2, pisType, ',');
-        if (infoString_2.fail())
-            continue;
-
-        infoString_2 >> pisColor;
-        if (infoString_2.fail())
-            continue;
-        infoString_2.ignore(1, ',');
-
-        std::getline(infoString_2, pisIdentifier);
-        if (infoString_2.fail())
-            continue;
-
-        if (pisColor)
-        {
-            this->boardPieces[x][y]->possibleMoves(x, y, pisColor, whitePossibleMoves);
-        }
-        else
-        {
-            this->boardPieces[x][y]->possibleMoves(x, y, pisColor, blackPossibleMoves);
-        }
-    }
-    currentPositionFile_2.close();
-
-    bool whiteKingCheckFlag = 0;
-    bool blackKingCheckFlag = 0;
-
-    for (const auto &bpair : blackPossibleMoves)
-    {
-        int xMove = bpair[0];
-        int yMove = bpair[1];
-        if (whiteKingCorrd[0] == xMove && whiteKingCorrd[1] == yMove)
-        {
-            whiteKingCheckFlag = 1;
-        }
-    }
-
-    for (const auto &wpair : whitePossibleMoves)
-    {
-        int xMove = wpair[0];
-        int yMove = wpair[1];
-        if (blackKingCorrd[0] == xMove && blackKingCorrd[1] == yMove)
-        {
-            blackKingCheckFlag = 1;
-        }
-    }
-
-    bool playerTurn;
-    std::ifstream playerTurnFile("../templates/player_turn.txt");
-    playerTurnFile >> playerTurn;
-    playerTurn = !playerTurn;
-    playerTurnFile.close();
-
-    if ((playerTurn && whiteKingCheckFlag) || (!playerTurn && blackKingCheckFlag))
-    {
-        std::ifstream tempPositionFile_3("../templates/temp_piece_position.txt");
-        std::ofstream currentPositionFile_3("../templates/current_piece_position.txt");
-        std::string infoLine_3;
-
-        while (std::getline(tempPositionFile_3, infoLine_3))
-        {
-            currentPositionFile_3 << infoLine_3 << std::endl;
-        }
-        tempPositionFile_3.close();
-        currentPositionFile_3.close();
-
-        bool turnNum, inverseTurn;
-        std::ifstream playerTurnFile_1("../templates/player_turn.txt");
-        std::ofstream inversePlayerTurnFile("../templates/inverse_player_turn.txt");
-
-        playerTurnFile_1 >> turnNum;
-        inverseTurn = !turnNum;
-        inversePlayerTurnFile << inverseTurn;
-
-        playerTurnFile_1.close();
-        inversePlayerTurnFile.close();
-        std::filesystem::remove("../templates/player_turn.txt");
-        std::filesystem::rename("../templates/inverse_player_turn.txt", "../templates/player_turn.txt");
-    }
-
-    std::ifstream currentPositionFile_4("../templates/current_piece_position.txt");
-    std::ofstream tempPositionFile_4("../templates/temp_piece_position.txt");
-    std::string infoLine_4;
-
-    while (std::getline(currentPositionFile_4, infoLine_4))
-    {
-        tempPositionFile_4 << infoLine_4 << std::endl;
-    }
-    currentPositionFile_4.close();
-    tempPositionFile_4.close();
 
     std::ifstream isButtonClickedFile("../templates/is_button_clicked.txt");
     std::string coordInfoLine;
@@ -582,13 +475,14 @@ void MatchState::renderPieces(sf::RenderTarget *target)
                 }
                 currentPositionFile_5.close();
 
-                if ((playerTurn && !whiteKingCheckFlag) || (!playerTurn && !blackKingCheckFlag))
+                if ((this->playerTurn && !this->whiteKingCheckFlag) || (!this->playerTurn && !this->blackKingCheckFlag))
                 {
                     this->castle(initialRow, initialColumn, finalRow, finalColumn);
                 }
 
                 this->boardPieces[initialRow][initialColumn]->movePiece(initialRow, initialColumn, finalRow, finalColumn);
                 this->checkForPawnPromotion();
+                this->isCheck(target);
 
                 delete this->boardPieces[initialRow][initialColumn];
                 this->boardPieces[initialRow][initialColumn] = nullptr;
@@ -768,6 +662,50 @@ void MatchState::renderPawnPromoDialog(sf::RenderTarget *target)
     }
 }
 
+void MatchState::renderCheckDialog(sf::RenderTarget *target)
+{
+    bool pieceColor, checkFlag;
+    char delimeter;
+
+    std::ifstream checkFlagFile("../templates/check_flag.txt");
+    checkFlagFile >> pieceColor >> delimeter >> checkFlag;
+    checkFlagFile.close();
+
+    if (checkFlag)
+    {
+        sf::RectangleShape checkDialogBox;
+
+        sf::Font titleFont;
+        sf::Text titleText;
+
+        float startXPosition = 0.f;
+        float startYPosition = (target->getSize().y - 150.f) / 2;
+
+        checkDialogBox.setPosition(sf::Vector2f(startXPosition, startYPosition));
+        checkDialogBox.setSize(sf::Vector2f(350.f, 150.f));
+        checkDialogBox.setFillColor(sf::Color(54, 58, 55));
+
+        target->draw(checkDialogBox);
+
+        titleFont.loadFromFile("../fonts/inter_bold.ttf");
+        titleText.setFont(titleFont);
+
+        titleText.setString("Check !!!");
+        titleText.setCharacterSize(35);
+        titleText.setFillColor(sf::Color::White);
+
+        titleText.setPosition(sf::Vector2f(startXPosition + 100.f, startYPosition + 20.f));
+        target->draw(titleText);
+
+        std::string playerShade = pieceColor ? "White" : "Black";
+
+        titleText.setString(playerShade + " king is in danger.");
+        titleText.setCharacterSize(25);
+        titleText.setPosition(sf::Vector2f(startXPosition + 35.f, startYPosition + 80.f));
+        target->draw(titleText);
+    }
+}
+
 void MatchState::checkForPawnPromotion()
 {
     std::ifstream currentPositionFile("../templates/current_piece_position.txt");
@@ -940,4 +878,242 @@ void MatchState::castle(int initialRow, int initialColumn, int finalRow, int fin
         }
     }
     currentPositionFile.close();
+}
+
+void MatchState::isCheck(sf::RenderTarget *target)
+{
+    int blackKingCorrd[2];
+    int whiteKingCorrd[2];
+    std::ifstream currentPositionFile_1("../templates/current_piece_position.txt");
+    std::string infoLine_1;
+
+    while (std::getline(currentPositionFile_1, infoLine_1))
+    {
+        std::istringstream infoString_1(infoLine_1);
+        int x, y;
+        std::string pisType;
+        bool pisColor;
+        std::string pisIdentifier;
+
+        infoString_1 >> x;
+        infoString_1.ignore(1, ',');
+
+        infoString_1 >> y;
+        infoString_1.ignore(1, ',');
+
+        std::getline(infoString_1, pisType, ',');
+        if (infoString_1.fail())
+            continue;
+
+        infoString_1 >> pisColor;
+        if (infoString_1.fail())
+            continue;
+        infoString_1.ignore(1, ',');
+
+        std::getline(infoString_1, pisIdentifier);
+        if (infoString_1.fail())
+            continue;
+
+        pisType = pisType.substr(pisType.find_first_not_of(" \t"));
+        pisIdentifier = pisIdentifier.substr(pisIdentifier.find_first_not_of(" \t"));
+
+        if (pisType == "king")
+        {
+            if (pisColor)
+            {
+                whiteKingCorrd[0] = x;
+                whiteKingCorrd[1] = y;
+            }
+            else
+            {
+                blackKingCorrd[0] = x;
+                blackKingCorrd[1] = y;
+            }
+        }
+    }
+    currentPositionFile_1.close();
+
+    std::vector<std::vector<int>> whitePossibleMoves = {};
+    std::vector<std::vector<int>> blackPossibleMoves = {};
+
+    std::ifstream currentPositionFile_2("../templates/current_piece_position.txt");
+    std::string infoLine_2;
+
+    while (std::getline(currentPositionFile_2, infoLine_2))
+    {
+        std::istringstream infoString_2(infoLine_2);
+        int x, y;
+        std::string pisType;
+        bool pisColor;
+        std::string pisIdentifier;
+
+        infoString_2 >> x;
+        infoString_2.ignore(1, ',');
+
+        infoString_2 >> y;
+        infoString_2.ignore(1, ',');
+
+        std::getline(infoString_2, pisType, ',');
+        if (infoString_2.fail())
+            continue;
+
+        infoString_2 >> pisColor;
+        if (infoString_2.fail())
+            continue;
+        infoString_2.ignore(1, ',');
+
+        std::getline(infoString_2, pisIdentifier);
+        if (infoString_2.fail())
+            continue;
+
+        std::string imageColor = pisColor ? "white" : "black";
+        sf::Color btnColor = sf::Color::White;
+
+        delete this->virtualBoardPieces[x][y];
+        if (pisType == "pawn")
+        {
+            std::string imagePath = "../src/" + imageColor + "_pawn.png";
+            this->virtualBoardPieces[x][y] = new Pawn(pisColor, x, y, btnColor, imagePath, target);
+        }
+        else if (pisType == "bishop")
+        {
+            std::string imagePath = "../src/" + imageColor + "_bishop.png";
+            this->virtualBoardPieces[x][y] = new Bishop(pisColor, x, y, btnColor, imagePath, target);
+        }
+        else if (pisType == "knight")
+        {
+            std::string imagePath = "../src/" + imageColor + "_knight.png";
+            this->virtualBoardPieces[x][y] = new Knight(pisColor, x, y, btnColor, imagePath, target);
+        }
+        else if (pisType == "rook")
+        {
+            std::string imagePath = "../src/" + imageColor + "_rook.png";
+            this->virtualBoardPieces[x][y] = new Rook(pisColor, x, y, btnColor, imagePath, target);
+        }
+        else if (pisType == "queen")
+        {
+            std::string imagePath = "../src/" + imageColor + "_queen.png";
+            this->virtualBoardPieces[x][y] = new Queen(pisColor, x, y, btnColor, imagePath, target);
+        }
+        else if (pisType == "king")
+        {
+            std::string imagePath = "../src/" + imageColor + "_king.png";
+            this->virtualBoardPieces[x][y] = new King(pisColor, x, y, btnColor, imagePath, target);
+        }
+
+        if (pisColor)
+        {
+            this->virtualBoardPieces[x][y]->possibleMoves(x, y, pisColor, whitePossibleMoves);
+        }
+        else
+        {
+            this->virtualBoardPieces[x][y]->possibleMoves(x, y, pisColor, blackPossibleMoves);
+        }
+        delete this->virtualBoardPieces[x][y];
+        this->virtualBoardPieces[x][y] = nullptr;
+    }
+    currentPositionFile_2.close();
+
+    bool whiteKingCheckFlag = 0;
+    bool blackKingCheckFlag = 0;
+
+    for (const auto &bpair : blackPossibleMoves)
+    {
+        int xMove = bpair[0];
+        int yMove = bpair[1];
+        if (whiteKingCorrd[0] == xMove && whiteKingCorrd[1] == yMove)
+        {
+            whiteKingCheckFlag = 1;
+        }
+    }
+
+    for (const auto &wpair : whitePossibleMoves)
+    {
+        int xMove = wpair[0];
+        int yMove = wpair[1];
+        if (blackKingCorrd[0] == xMove && blackKingCorrd[1] == yMove)
+        {
+            blackKingCheckFlag = 1;
+        }
+    }
+
+    bool playerTurn;
+    std::ifstream playerTurnFile("../templates/player_turn.txt");
+    playerTurnFile >> playerTurn;
+    playerTurnFile.close();
+
+    this->playerTurn = !playerTurn;
+    this->whiteKingCheckFlag = whiteKingCheckFlag;
+    this->blackKingCheckFlag = blackKingCheckFlag;
+
+    if ((whiteKingCheckFlag) || (blackKingCheckFlag))
+    {
+        char deli;
+        bool whoseTurn, prevFlag;
+
+        std::ifstream checkFlagFile("../templates/check_flag.txt");
+        checkFlagFile >> whoseTurn >> deli >> prevFlag;
+        checkFlagFile.close();
+
+        if (prevFlag)
+        {
+            std::ifstream tempPositionFile_3("../templates/temp_piece_position.txt");
+            std::ofstream currentPositionFile_3("../templates/current_piece_position.txt");
+            std::string infoLine_3;
+
+            while (std::getline(tempPositionFile_3, infoLine_3))
+            {
+                currentPositionFile_3 << infoLine_3 << std::endl;
+            }
+            tempPositionFile_3.close();
+            currentPositionFile_3.close();
+
+            bool turnNum, inverseTurn;
+            std::ifstream playerTurnFile_1("../templates/player_turn.txt");
+            std::ofstream inversePlayerTurnFile("../templates/inverse_player_turn.txt");
+
+            playerTurnFile_1 >> turnNum;
+            inverseTurn = !turnNum;
+            inversePlayerTurnFile << inverseTurn;
+
+            playerTurnFile_1.close();
+            inversePlayerTurnFile.close();
+            std::filesystem::remove("../templates/player_turn.txt");
+            std::filesystem::rename("../templates/inverse_player_turn.txt", "../templates/player_turn.txt");
+        }
+        else
+        {
+            std::ofstream checkFlagFile_1("../templates/check_flag.txt");
+            checkFlagFile_1 << !playerTurn << ',' << 1;
+            checkFlagFile_1.close();
+
+            std::ifstream currentPositionFile_4("../templates/current_piece_position.txt");
+            std::ofstream tempPositionFile_4("../templates/temp_piece_position.txt");
+            std::string infoLine_4;
+
+            while (std::getline(currentPositionFile_4, infoLine_4))
+            {
+                tempPositionFile_4 << infoLine_4 << std::endl;
+            }
+            currentPositionFile_4.close();
+            tempPositionFile_4.close();
+        }
+    }
+    else
+    {
+        std::ofstream checkFlagFile_2("../templates/check_flag.txt");
+        checkFlagFile_2 << 0 << ',' << 0;
+        checkFlagFile_2.close();
+
+        std::ifstream currentPositionFile_5("../templates/current_piece_position.txt");
+        std::ofstream tempPositionFile_5("../templates/temp_piece_position.txt");
+        std::string infoLine_5;
+
+        while (std::getline(currentPositionFile_5, infoLine_5))
+        {
+            tempPositionFile_5 << infoLine_5 << std::endl;
+        }
+        currentPositionFile_5.close();
+        tempPositionFile_5.close();
+    }
 }
