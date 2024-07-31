@@ -2,16 +2,16 @@
 
 Piece::Piece(bool pieceColor, int row, int column, sf::Color btnColor, std::string imagePath, sf::RenderTarget *target)
 {
+    this->pieceColor = pieceColor;
     this->row = row;
     this->column = column;
-    this->pieceColor = pieceColor;
 
-    bool whoseTurn;
-    std::ifstream turner("../turn.txt");
-    turner >> whoseTurn;
-    turner.close();
+    bool playerTurn;
+    std::ifstream playerTurnFile("../templates/player_turn.txt");
+    playerTurnFile >> playerTurn;
+    playerTurnFile.close();
 
-    if (whoseTurn)
+    if (playerTurn)
     {
         this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
         this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
@@ -39,35 +39,35 @@ Piece::~Piece()
 
 void Piece::movePiece(int currentRow, int currentColumn, int targetRow, int targetColumn)
 {
-    std::ifstream sourceFile("../pieces_info.txt");
-    std::string line;
+    std::ifstream currentPositionFile("../templates/current_piece_position.txt");
+    std::string infoLine;
 
-    while (std::getline(sourceFile, line))
+    while (std::getline(currentPositionFile, infoLine))
     {
-        std::istringstream ss(line);
+        std::istringstream infoString(infoLine);
 
         int row, col;
         std::string pieceType;
         bool pieceColor;
         std::string pieceIdentifier;
 
-        ss >> row;
-        ss.ignore(1, ',');
+        infoString >> row;
+        infoString.ignore(1, ',');
 
-        ss >> col;
-        ss.ignore(1, ',');
+        infoString >> col;
+        infoString.ignore(1, ',');
 
-        std::getline(ss, pieceType, ',');
-        if (ss.fail())
+        std::getline(infoString, pieceType, ',');
+        if (infoString.fail())
             continue;
 
-        ss >> pieceColor;
-        if (ss.fail())
+        infoString >> pieceColor;
+        if (infoString.fail())
             continue;
-        ss.ignore(1, ',');
+        infoString.ignore(1, ',');
 
-        std::getline(ss, pieceIdentifier);
-        if (ss.fail())
+        std::getline(infoString, pieceIdentifier);
+        if (infoString.fail())
             continue;
 
         pieceType = pieceType.substr(pieceType.find_first_not_of(" \t"));
@@ -75,102 +75,89 @@ void Piece::movePiece(int currentRow, int currentColumn, int targetRow, int targ
 
         if (row == currentRow && col == currentColumn)
         {
-            this->pType = pieceType;
-            this->pColor = pieceColor;
-            this->pIdentifier = pieceIdentifier;
+            this->movingPieceType = pieceType;
+            this->movingPieceColor = pieceColor;
+            this->movingPieceIdentifier = pieceIdentifier;
             break;
         }
     }
-    sourceFile.close();
+    currentPositionFile.close();
 
-    std::ifstream csourceFile("../pieces_info.txt");
-    std::ofstream cdestinationFile("../move_pieces.txt");
-    std::string cline;
+    std::ifstream currentPositionFile_1("../templates/current_piece_position.txt");
+    std::ofstream tempMoveFile("../templates/moving_piece.txt");
+    std::string infoLine_1;
 
-    while (std::getline(csourceFile, cline))
+    while (std::getline(currentPositionFile_1, infoLine_1))
     {
-        std::istringstream sscord(cline);
+        std::istringstream infoString(infoLine_1);
 
         int row, col;
 
-        sscord >> row;
-        sscord.ignore(1, ',');
+        infoString >> row;
+        infoString.ignore(1, ',');
 
-        sscord >> col;
-        sscord.ignore(1, ',');
+        infoString >> col;
+        infoString.ignore(1, ',');
 
         if (row == targetRow && col == targetColumn)
         {
-            cdestinationFile << row << ',' << col << ',' << this->pType << ',' << this->pColor << ',' << this->pIdentifier << std::endl;
+            tempMoveFile << row << ',' << col << ',' << this->movingPieceType << ',' << this->movingPieceColor << ',' << this->movingPieceIdentifier << std::endl;
         }
         else if (row == currentRow && col == currentColumn)
         {
-            cdestinationFile << row << ',' << col << ',' << ',' << ',' << std::endl;
+            tempMoveFile << row << ',' << col << ',' << ',' << ',' << std::endl;
         }
         else
         {
-            cdestinationFile << cline << std::endl;
+            tempMoveFile << infoLine_1 << std::endl;
         }
     }
-    csourceFile.close();
-    cdestinationFile.close();
-    std::filesystem::remove("../pieces_info.txt");
-    std::filesystem::rename("../move_pieces.txt", "../pieces_info.txt");
+    currentPositionFile_1.close();
+    tempMoveFile.close();
+    std::filesystem::remove("../templates/current_piece_position.txt");
+    std::filesystem::rename("../templates/moving_piece.txt", "../templates/current_piece_position.txt");
 
-    std::ifstream dsourceFile("../active_tiles.txt");
-    std::ofstream ddestinationFile("../reset.txt");
-    std::string dline;
-    for (int i = 0; i < 8; i++)
+    std::ifstream tileInactivatorFile("../templates/inactive_all_tiles.txt");
+    std::ofstream activeTileInfoFile("../templates/active_tile_info.txt");
+    std::string inactivateLine;
+
+    while (std::getline(tileInactivatorFile, inactivateLine))
     {
-        for (int j = 0; j < 8; j++)
-        {
-            std::getline(dsourceFile, dline);
-            std::istringstream ssd(dline);
-
-            int num1, num2, num3;
-            char delimiter1, delimiter2;
-
-            ssd >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3;
-
-            ddestinationFile << num1 << ',' << num2 << ',' << 0 << std::endl;
-        }
+        activeTileInfoFile << inactivateLine << std::endl;
     }
-
-    dsourceFile.close();
-    ddestinationFile.close();
-    std::filesystem::remove("../active_tiles.txt");
-    std::filesystem::rename("../reset.txt", "../active_tiles.txt");
+    tileInactivatorFile.close();
+    activeTileInfoFile.close();
 }
 
 std::vector<std::vector<std::string>> Piece::readBoardState()
 {
     std::vector<std::vector<std::string>> boardState(8, std::vector<std::string>(8, ""));
-    std::ifstream file("../pieces_info.txt");
-    std::string line;
+    std::ifstream currentPositionFile("../templates/current_piece_position.txt");
+    std::string infoLine;
 
-    while (std::getline(file, line))
+    while (std::getline(currentPositionFile, infoLine))
     {
-        std::stringstream ss(line);
+        std::stringstream infoString(infoLine);
         int row, column, color;
         std::string piece, identifier;
 
-        ss >> row;
-        ss.ignore(1, ',');
+        infoString >> row;
+        infoString.ignore(1, ',');
 
-        ss >> column;
-        ss.ignore(1, ',');
+        infoString >> column;
+        infoString.ignore(1, ',');
 
-        std::getline(ss, piece, ',');
-        if (ss.fail())
+        std::getline(infoString, piece, ',');
+        if (infoString.fail())
             continue;
 
-        ss >> color;
-        if (ss.fail())
+        infoString >> color;
+        if (infoString.fail())
             continue;
-        ss.ignore(1, ',');
+        infoString.ignore(1, ',');
 
-        std::getline(ss, identifier);
-        if (ss.fail())
+        std::getline(infoString, identifier);
+        if (infoString.fail())
             continue;
 
         boardState[row][column] = piece + "," + std::to_string(color);
@@ -181,20 +168,20 @@ std::vector<std::vector<std::string>> Piece::readBoardState()
 
 void Piece::update()
 {
-    std::ifstream filler("../turn.txt");
-    bool turnNum;
-    filler >> turnNum;
-    filler.close();
+    bool playerTurn;
+    std::ifstream playerTurnFile("../templates/player_turn.txt");
+    playerTurnFile >> playerTurn;
+    playerTurnFile.close();
 
-    if (turnNum == this->pieceColor)
+    if (playerTurn == this->pieceColor)
     {
         bool clicked;
         char del1, del2;
         float mouseX, mouseY;
 
-        std::ifstream test("../mouse_position.txt");
-        test >> clicked >> del1 >> mouseX >> del2 >> mouseY;
-        test.close();
+        std::ifstream mousePositionFile("../templates/mouse_position.txt");
+        mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+        mousePositionFile.close();
 
         sf::Vector2f clickPosition(mouseX, mouseY);
 
@@ -202,21 +189,21 @@ void Piece::update()
         {
             if (this->sprite.getGlobalBounds().contains(clickPosition))
             {
-                std::ifstream sourceFile("../active_tiles.txt");
-                std::ofstream destinationFile("../modifying_tiles.txt");
-                std::string line;
+                std::ifstream activeTileInfoFile("../templates/active_tile_info.txt");
+                std::ofstream changeActiveTileFile("../templates/change_active_tile.txt");
+                std::string activeInfoLine;
 
                 for (int i = 0; i < 8; ++i)
                 {
                     for (int j = 0; j < 8; ++j)
                     {
-                        std::getline(sourceFile, line);
-                        std::istringstream ss(line);
+                        std::getline(activeTileInfoFile, activeInfoLine);
+                        std::istringstream activeInfoString(activeInfoLine);
 
                         int num1, num2, num3;
                         char delimiter1, delimiter2;
 
-                        if (ss >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3)
+                        if (activeInfoString >> num1 >> delimiter1 >> num2 >> delimiter2 >> num3)
                         {
                             if (num1 == this->row && num2 == this->column)
                             {
@@ -228,17 +215,17 @@ void Piece::update()
                             }
                         }
 
-                        destinationFile << num1 << ',' << num2 << ',' << num3 << std::endl;
+                        changeActiveTileFile << num1 << ',' << num2 << ',' << num3 << std::endl;
                     }
                 }
-                sourceFile.close();
-                destinationFile.close();
-                std::filesystem::remove("../active_tiles.txt");
-                std::filesystem::rename("../modifying_tiles.txt", "../active_tiles.txt");
+                activeTileInfoFile.close();
+                changeActiveTileFile.close();
+                std::filesystem::remove("../templates/active_tile_info.txt");
+                std::filesystem::rename("../templates/change_active_tile.txt", "../templates/active_tile_info.txt");
 
-                std::ofstream idk("../mouse_position.txt");
-                idk << 0 << ',' << 0 << ',' << 0;
-                idk.close();
+                std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
+                mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
+                mousePositionFile_1.close();
             }
         }
     }

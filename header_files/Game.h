@@ -13,6 +13,7 @@ private:
 
     void initWindow();
     void initStates();
+    void initApplication();
     
 public:
     Game();
@@ -23,5 +24,4 @@ public:
     void renderWindow();
     void run();
 
-    void endApplication();
 };

@@ -68,13 +68,13 @@ void Knight::filterValidMoves(int row, int column, bool pieceColor, std::vector<
         int newColumn = move[1];
         if (!boardState[newRow][newColumn].empty())
         {
-            std::stringstream ss(boardState[newRow][newColumn]);
+            std::stringstream boardInfoString(boardState[newRow][newColumn]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
             
             if (color == pieceColor)
             {

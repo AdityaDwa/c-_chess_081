@@ -2,10 +2,74 @@
 
 void Game::initWindow()
 {
-    // this->window = new sf::RenderWindow(sf::VideoMode(1728, 972), "Chess", sf::Style::Default);
-    this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
+    this->window = new sf::RenderWindow(sf::VideoMode(1728, 972), "Chess", sf::Style::Default);
+    // this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(true);
+}
+
+void Game::initApplication()
+{
+    std::ifstream initialPositionFile("../templates/initial_piece_position.txt");
+    std::ofstream currentPositionFile("../templates/current_piece_position.txt");
+    std::ofstream tempPositionFile("../templates/temp_piece_position.txt");
+    std::string infoLine;
+
+    while (std::getline(initialPositionFile, infoLine))
+    {
+        currentPositionFile << infoLine << std::endl;
+        tempPositionFile << infoLine << std::endl;
+    }
+
+    initialPositionFile.close();
+    currentPositionFile.close();
+    tempPositionFile.close();
+
+    std::ifstream tileInactivatorFile("../templates/inactive_all_tiles.txt");
+    std::ofstream activeTileInfoFile("../templates/active_tile_info.txt");
+    std::string inactivateLine;
+
+    while (std::getline(tileInactivatorFile, inactivateLine))
+    {
+        activeTileInfoFile << inactivateLine << std::endl;
+    }
+    tileInactivatorFile.close();
+    activeTileInfoFile.close();
+
+    std::ofstream isButtonClickedFile("../templates/is_button_clicked.txt");
+    isButtonClickedFile.close();
+
+    std::ofstream playerTurnFile("../templates/player_turn.txt");
+    playerTurnFile << 1;
+    playerTurnFile.close();
+
+    std::ofstream mousePositionFile("../templates/mouse_position.txt");
+    mousePositionFile << 0 << ',' << 0 << ',' << 0;
+    mousePositionFile.close();
+
+    std::ofstream whiteKingCastleFile("../templates/white_king_castle.txt");
+    whiteKingCastleFile << 0;
+    whiteKingCastleFile.close();
+
+    std::ofstream whiteRightRookCastleFile("../templates/white_right_rook_castle.txt");
+    whiteRightRookCastleFile << 0;
+    whiteRightRookCastleFile.close();
+
+    std::ofstream whiteLeftRookCastleFile("../templates/white_left_rook_castle.txt");
+    whiteLeftRookCastleFile << 0;
+    whiteLeftRookCastleFile.close();
+
+    std::ofstream blackKingCastleFile("../templates/black_king_castle.txt");
+    blackKingCastleFile << 0;
+    blackKingCastleFile.close();
+
+    std::ofstream blackRightRookCastleFile("../templates/black_right_rook_castle.txt");
+    blackRightRookCastleFile << 0;
+    blackRightRookCastleFile.close();
+
+    std::ofstream blackLeftRookCastleFile("../templates/black_left_rook_castle.txt");
+    blackLeftRookCastleFile << 0;
+    blackLeftRookCastleFile.close();
 }
 
 void Game::initStates()
@@ -16,7 +80,7 @@ void Game::initStates()
 Game::Game()
 {
     this->initWindow();
-    this->endApplication();
+    this->initApplication();
     this->initStates();
 }
 
@@ -43,7 +107,6 @@ void Game::updateWindow()
     {
         if (e.type == sf::Event::Closed)
         {
-            endApplication();
             this->window->close();
         }
 
@@ -51,16 +114,15 @@ void Game::updateWindow()
         {
             if (e.key.code == sf::Keyboard::Escape)
             {
-                endApplication();
                 this->window->close();
             }
         }
 
         if (e.type == sf::Event::MouseButtonPressed)
         {
-            std::ofstream test("../mouse_position.txt");
-            test << 1 << ',' << e.mouseButton.x << ',' << e.mouseButton.y << std::endl;
-            test.close();
+            std::ofstream mousePositionFile("../templates/mouse_position.txt");
+            mousePositionFile << 1 << ',' << e.mouseButton.x << ',' << e.mouseButton.y << std::endl;
+            mousePositionFile.close();
         }
     }
 
@@ -77,7 +139,6 @@ void Game::updateWindow()
     }
     else
     {
-        endApplication();
         this->window->close();
     }
 }
@@ -102,53 +163,4 @@ void Game::run()
         this->updateWindow();
         this->renderWindow();
     }
-}
-
-void Game::endApplication()
-{
-    std::ifstream sourceFile("../initial_position.txt");
-    std::ofstream destinationFile("../pieces_info.txt");
-    std::string line;
-
-    while (std::getline(sourceFile, line))
-    {
-        destinationFile << line << std::endl;
-    }
-
-    sourceFile.close();
-    destinationFile.close();
-
-    std::ifstream inactiveFile("../inactive_all_tiles.txt");
-    std::ofstream activeFile("../active_tiles.txt");
-    std::string activeLine;
-
-    while (std::getline(inactiveFile, activeLine))
-    {
-        activeFile << activeLine << std::endl;
-    }
-
-    inactiveFile.close();
-    activeFile.close();
-
-    std::ofstream vacancy("../isClickedOn.txt");
-    vacancy.close();
-
-    std::ofstream filler("../turn.txt");
-    filler << 1;
-    filler.close();
-
-    std::ifstream winfile("../pieces_info.txt");
-    std::ofstream woutfile("../ongoing_piece_info.txt");
-    std::string wline;
-
-    while (std::getline(winfile, wline))
-    {
-        woutfile << wline << std::endl;
-    }
-    winfile.close();
-    woutfile.close();
-
-    std::ofstream idk("../mouse_position.txt");
-    idk << 0 << ',' << 0 << ',' << 0;
-    idk.close();
 }

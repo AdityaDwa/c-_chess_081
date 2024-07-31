@@ -17,13 +17,13 @@ void Rook::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
     {
         if (!boardState[row][column + i].empty())
         {
-            std::stringstream ss(boardState[row][column + i]);
+            std::stringstream boardInfoString(boardState[row][column + i]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -45,13 +45,13 @@ void Rook::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
     {
         if (!boardState[row][column - j].empty())
         {
-            std::stringstream ss(boardState[row][column - j]);
+            std::stringstream boardInfoString(boardState[row][column - j]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -73,13 +73,13 @@ void Rook::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
     {
         if (!boardState[row + k][column].empty())
         {
-            std::stringstream ss(boardState[row + k][column]);
+            std::stringstream boardInfoString(boardState[row + k][column]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -101,13 +101,13 @@ void Rook::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
     {
         if (!boardState[row - l][column].empty())
         {
-            std::stringstream ss(boardState[row - l][column]);
+            std::stringstream boardInfoString(boardState[row - l][column]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {

@@ -33,9 +33,9 @@ protected:
     sf::Sprite sprite;
 
     
-    std::string pType;
-    bool pColor;
-    std::string pIdentifier;
+    std::string movingPieceType;
+    bool movingPieceColor;
+    std::string movingPieceIdentifier;
 
 public:
     Piece(bool pieceColor, int row, int column, sf::Color btnColor, std::string imagePath, sf::RenderTarget *target);

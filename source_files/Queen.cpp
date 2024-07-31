@@ -16,13 +16,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row][column + i].empty())
         {
-            std::stringstream ss(boardState[row][column + i]);
+            std::stringstream boardInfoString(boardState[row][column + i]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -44,13 +44,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row][column - j].empty())
         {
-            std::stringstream ss(boardState[row][column - j]);
+            std::stringstream boardInfoString(boardState[row][column - j]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -72,13 +72,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row + k][column].empty())
         {
-            std::stringstream ss(boardState[row + k][column]);
+            std::stringstream boardInfoString(boardState[row + k][column]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -100,13 +100,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row - l][column].empty())
         {
-            std::stringstream ss(boardState[row - l][column]);
+            std::stringstream boardInfoString(boardState[row - l][column]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -128,13 +128,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row + m][column + m].empty())
         {
-            std::stringstream ss(boardState[row + m][column + m]);
+            std::stringstream boardInfoString(boardState[row + m][column + m]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -156,13 +156,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row + n][column - n].empty())
         {
-            std::stringstream ss(boardState[row + n][column - n]);
+            std::stringstream boardInfoString(boardState[row + n][column - n]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -184,13 +184,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row - o][column + o].empty())
         {
-            std::stringstream ss(boardState[row - o][column + o]);
+            std::stringstream boardInfoString(boardState[row - o][column + o]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -212,13 +212,13 @@ void Queen::possibleMoves(int row, int column, bool pieceColor, std::vector<std:
     {
         if (!boardState[row - p][column - p].empty())
         {
-            std::stringstream ss(boardState[row - p][column - p]);
+            std::stringstream boardInfoString(boardState[row - p][column - p]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
             
             if (color == pieceColor)
             {

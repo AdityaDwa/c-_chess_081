@@ -28,7 +28,6 @@ protected:
     float xPosition;
     float yPosition;
 
-    sf::RectangleShape buttonShape;
     sf::Texture texture;
     sf::Sprite sprite;
 

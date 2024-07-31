@@ -27,13 +27,13 @@ void Pawn::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
         {
             if (!boardState[row + 1][column + 1].empty())
             {
-                std::stringstream ss(boardState[row + 1][column + 1]);
+                std::stringstream boardInfoString(boardState[row + 1][column + 1]);
 
                 std::string piece;
                 int color;
 
-                std::getline(ss, piece, ',');
-                ss >> color;
+                std::getline(boardInfoString, piece, ',');
+                boardInfoString >> color;
 
                 if (color != pieceColor)
                 {
@@ -46,13 +46,13 @@ void Pawn::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
         {
             if (!boardState[row - 1][column + 1].empty())
             {
-                std::stringstream ss(boardState[row - 1][column + 1]);
+                std::stringstream boardInfoString(boardState[row - 1][column + 1]);
 
                 std::string piece;
                 int color;
 
-                std::getline(ss, piece, ',');
-                ss >> color;
+                std::getline(boardInfoString, piece, ',');
+                boardInfoString >> color;
 
                 if (color != pieceColor)
                 {
@@ -82,13 +82,13 @@ void Pawn::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
         {
             if (!boardState[row + 1][column - 1].empty())
             {
-                std::stringstream ss(boardState[row + 1][column - 1]);
+                std::stringstream boardInfoString(boardState[row + 1][column - 1]);
 
                 std::string piece;
                 int color;
 
-                std::getline(ss, piece, ',');
-                ss >> color;
+                std::getline(boardInfoString, piece, ',');
+                boardInfoString >> color;
 
                 if (color != pieceColor)
                 {
@@ -101,13 +101,13 @@ void Pawn::possibleMoves(int row, int column, bool pieceColor, std::vector<std::
         {
             if (!boardState[row - 1][column - 1].empty())
             {
-                std::stringstream ss(boardState[row - 1][column - 1]);
+                std::stringstream boardInfoString(boardState[row - 1][column - 1]);
 
                 std::string piece;
                 int color;
 
-                std::getline(ss, piece, ',');
-                ss >> color;
+                std::getline(boardInfoString, piece, ',');
+                boardInfoString >> color;
 
                 if (color != pieceColor)
                 {

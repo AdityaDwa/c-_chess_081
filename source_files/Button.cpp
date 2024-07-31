@@ -3,35 +3,35 @@
 Button::Button(int row, int column, int parentRow, int parentColumn, bool parentColor, sf::RenderTarget *target)
 {
     bool targetColor = parentColor;
-    std::ifstream sourceFile("../pieces_info.txt");
-    std::string line;
+    std::ifstream currentPositionFile("../templates/current_piece_position.txt");
+    std::string infoLine;
 
-    while (std::getline(sourceFile, line))
+    while (std::getline(currentPositionFile, infoLine))
     {
-        std::istringstream ss(line);
+        std::istringstream infoString(infoLine);
 
         int r, c;
         std::string pieceType;
         bool pieceColor;
         std::string pieceIdentifier;
 
-        ss >> r;
-        ss.ignore(1, ',');
+        infoString >> r;
+        infoString.ignore(1, ',');
 
-        ss >> c;
-        ss.ignore(1, ',');
+        infoString >> c;
+        infoString.ignore(1, ',');
 
-        std::getline(ss, pieceType, ',');
-        if (ss.fail())
+        std::getline(infoString, pieceType, ',');
+        if (infoString.fail())
             continue;
 
-        ss >> pieceColor;
-        if (ss.fail())
+        infoString >> pieceColor;
+        if (infoString.fail())
             continue;
-        ss.ignore(1, ',');
+        infoString.ignore(1, ',');
 
-        std::getline(ss, pieceIdentifier);
-        if (ss.fail())
+        std::getline(infoString, pieceIdentifier);
+        if (infoString.fail())
             continue;
 
         if (r == row && c == column)
@@ -39,19 +39,19 @@ Button::Button(int row, int column, int parentRow, int parentColumn, bool parent
             targetColor = pieceColor;
         }
     }
-    sourceFile.close();
+    currentPositionFile.close();
 
     this->selfRow = row;
     this->selfColumn = column;
     this->parentRow = parentRow;
     this->parentColumn = parentColumn;
 
-    bool whoseTurn;
-    std::ifstream turner("../turn.txt");
-    turner >> whoseTurn;
-    turner.close();
+    bool playerTurn;
+    std::ifstream playerTurnFile("../templates/player_turn.txt");
+    playerTurnFile >> playerTurn;
+    playerTurnFile.close();
 
-    if (whoseTurn)
+    if (playerTurn)
     {
         this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
         this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
@@ -91,9 +91,9 @@ void Button::update()
     char del1, del2;
     float mouseX, mouseY;
 
-    std::ifstream test("../mouse_position.txt");
-    test >> clicked >> del1 >> mouseX >> del2 >> mouseY;
-    test.close();
+    std::ifstream mousePositionFile("../templates/mouse_position.txt");
+    mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+    mousePositionFile.close();
 
     sf::Vector2f clickPosition(mouseX, mouseY);
 
@@ -101,13 +101,13 @@ void Button::update()
     {
         if (this->sprite.getGlobalBounds().contains(clickPosition))
         {
-            std::ofstream filegone("../isClickedOn.txt");
-            filegone << parentRow << ',' << parentColumn << ',' << selfRow << ',' << selfColumn << ',' << 1 << std::endl;
-            filegone.close();
+            std::ofstream isButtonClickedFile("../templates/is_button_clicked.txt");
+            isButtonClickedFile << parentRow << ',' << parentColumn << ',' << selfRow << ',' << selfColumn << ',' << 1 << std::endl;
+            isButtonClickedFile.close();
 
-            std::ofstream idk("../mouse_position.txt");
-            idk << 0 << ',' << 0 << ',' << 0;
-            idk.close();
+            std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
+            mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
+            mousePositionFile_1.close();
         }
     }
 }

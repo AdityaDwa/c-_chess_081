@@ -17,13 +17,13 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
     {
         if (!boardState[row + i][column + i].empty())
         {
-            std::stringstream ss(boardState[row + i][column + i]);
+            std::stringstream boardInfoString(boardState[row + i][column + i]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -45,13 +45,13 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
     {
         if (!boardState[row + j][column - j].empty())
         {
-            std::stringstream ss(boardState[row + j][column - j]);
+            std::stringstream boardInfoString(boardState[row + j][column - j]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -73,13 +73,13 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
     {
         if (!boardState[row - k][column + k].empty())
         {
-            std::stringstream ss(boardState[row - k][column + k]);
+            std::stringstream boardInfoString(boardState[row - k][column + k]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
 
             if (color == pieceColor)
             {
@@ -101,13 +101,13 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
     {
         if (!boardState[row - l][column - l].empty())
         {
-            std::stringstream ss(boardState[row - l][column - l]);
+            std::stringstream boardInfoString(boardState[row - l][column - l]);
 
             std::string piece;
             int color;
 
-            std::getline(ss, piece, ',');
-            ss >> color;
+            std::getline(boardInfoString, piece, ',');
+            boardInfoString >> color;
             
             if (color == pieceColor)
             {

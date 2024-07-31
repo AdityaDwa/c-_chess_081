@@ -16,9 +16,16 @@ private:
     Piece* boardPieces[8][8];
     Button* btns[30];
 
-    sf::Font font;
+    sf::Font labelFont;
     sf::Text xtileLabel;
     sf::Text ytileLabel;
+
+    sf::Font playerFont;
+    sf::Text playerName;
+
+    sf::Texture texture;
+    sf::Sprite sprite;
+    sf::RectangleShape icon;
     
 public:
     MatchState(sf::RenderWindow *window);
@@ -30,4 +37,8 @@ public:
 
     void renderBoard(sf::RenderTarget *target);
     void renderPieces(sf::RenderTarget *target);
+    void renderPawnPromoDialog(sf::RenderTarget *target);
+
+    void checkForPawnPromotion();
+    void castle(int initialRow, int initialColumn, int finalRow, int finalColumn);
 };
