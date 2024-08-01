@@ -176,6 +176,7 @@ void Game::updateWindow()
             this->stateStack.top()->endState();
             delete this->stateStack.top();
             this->stateStack.pop();
+            this->initApplication();
             this->window->close();
         }
     }
