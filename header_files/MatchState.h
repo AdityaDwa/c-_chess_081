@@ -28,7 +28,9 @@ private:
     sf::Sprite sprite;
     sf::RectangleShape icon;
 
-    bool playerTurn, whiteKingCheckFlag, blackKingCheckFlag;    
+    bool playerTurn, whiteKingCheckFlag, blackKingCheckFlag;
+    bool checkmate = false;
+
 public:
     MatchState(sf::RenderWindow *window);
     virtual ~MatchState();
@@ -41,8 +43,12 @@ public:
     void renderPieces(sf::RenderTarget *target);
     void renderPawnPromoDialog(sf::RenderTarget *target);
     void renderCheckDialog(sf::RenderTarget *target);
+    void renderResignDialog(sf::RenderTarget *target);
+    void renderResignConfirmDialog(sf::RenderTarget *target);
+    void renderStalemateDialog(sf::RenderTarget *target);
 
     void checkForPawnPromotion();
     void castle(int initialRow, int initialColumn, int finalRow, int finalColumn);
     void isCheck(sf::RenderTarget *target);
+    void isCheckmate(bool shade, std::vector<std::vector<int>>& oppMoveArray);
 };

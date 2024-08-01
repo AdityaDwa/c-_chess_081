@@ -35,6 +35,7 @@ void MainMenuState::renderBtns(sf::RenderTarget *target)
 
     sf::Font btnFont;
     sf::Text btnText[2];
+    sf::Text title;
 
     float startXPosition = (target->getSize().x - 225.f) / 2;
     float startYPosition = (target->getSize().y - 75.f) / 2;
@@ -49,6 +50,13 @@ void MainMenuState::renderBtns(sf::RenderTarget *target)
     btnText[0].setFont(btnFont);
     btnText[1].setFont(btnFont);
 
+    title.setFont(btnFont);
+    title.setString("Chess Game");
+    title.setCharacterSize(100);
+    title.setFillColor(sf::Color::White);
+    title.setPosition(sf::Vector2f((target->getSize().x / 2) - 300.f, 100.f));
+    target->draw(title);
+
     btnText[0].setString("Play");
     btnText[0].setCharacterSize(30);
     btnText[0].setFillColor(sf::Color::White);
@@ -56,7 +64,7 @@ void MainMenuState::renderBtns(sf::RenderTarget *target)
     btnText[0].setPosition(sf::Vector2f(startXPosition + 80.f, startYPosition + 20.f));
     target->draw(btnText[0]);
 
-    btnBox[1].setPosition(sf::Vector2f(startXPosition, startYPosition + 100.f));
+    btnBox[1].setPosition(sf::Vector2f(startXPosition, startYPosition + 125.f));
     btnBox[1].setSize(sf::Vector2f(225.f, 75.f));
     btnBox[1].setFillColor(sf::Color(169, 169, 169));
 
@@ -66,7 +74,7 @@ void MainMenuState::renderBtns(sf::RenderTarget *target)
     btnText[1].setCharacterSize(30);
     btnText[1].setFillColor(sf::Color::White);
 
-    btnText[1].setPosition(sf::Vector2f(startXPosition + 80.f, startYPosition + 120.f));
+    btnText[1].setPosition(sf::Vector2f(startXPosition + 80.f, startYPosition + 145.f));
     target->draw(btnText[1]);
 
     bool clicked;

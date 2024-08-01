@@ -77,6 +77,9 @@ void MatchState::render(sf::RenderTarget *target)
 
     this->renderPawnPromoDialog(target);
     this->renderCheckDialog(target);
+    this->renderResignDialog(target);
+    this->renderResignConfirmDialog(target);
+    this->renderStalemateDialog(target);
 }
 
 void MatchState::endState()
@@ -235,10 +238,9 @@ void MatchState::renderBoard(sf::RenderTarget *target)
             mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
             mousePositionFile_1.close();
 
-            // this->quitState = true;
-            std::ofstream logger("../logs/templog.txt");
-            logger << this->quitState;
-            logger.close();
+            std::ofstream resignPopupFile("../templates/resign_popup.txt");
+            resignPopupFile << 1;
+            resignPopupFile.close();
         }
     }
 }
@@ -706,6 +708,301 @@ void MatchState::renderCheckDialog(sf::RenderTarget *target)
     }
 }
 
+void MatchState::renderResignDialog(sf::RenderTarget *target)
+{
+    bool popup;
+    std::ifstream resignPopupFile("../templates/resign_popup.txt");
+    resignPopupFile >> popup;
+    resignPopupFile.close();
+
+    if (popup)
+    {
+
+        sf::RectangleShape resignDialogBox;
+
+        sf::Font titleFont;
+        sf::Text titleText;
+
+        float startXPosition = (target->getSize().x - 445.f) / 2;
+        float startYPosition = (target->getSize().y - 245.f) / 2;
+
+        resignDialogBox.setPosition(sf::Vector2f(startXPosition, startYPosition));
+        resignDialogBox.setSize(sf::Vector2f(445.f, 245.f));
+        resignDialogBox.setFillColor(sf::Color(54, 58, 55));
+
+        target->draw(resignDialogBox);
+
+        titleFont.loadFromFile("../fonts/inter_bold.ttf");
+        titleText.setFont(titleFont);
+
+        titleText.setString("Do you want to resign");
+        titleText.setCharacterSize(35);
+        titleText.setFillColor(sf::Color::White);
+
+        titleText.setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 20.f));
+        target->draw(titleText);
+
+        titleText.setString("the match ?");
+        titleText.setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 80.f));
+        target->draw(titleText);
+
+        sf::RectangleShape btnBox[2];
+
+        sf::Font btnFont;
+        sf::Text btnText[2];
+
+        btnBox[0].setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 160.f));
+        btnBox[0].setSize(sf::Vector2f(130.f, 50.f));
+        btnBox[0].setFillColor(sf::Color::Black);
+
+        target->draw(btnBox[0]);
+
+        btnFont.loadFromFile("../fonts/inter_bold.ttf");
+        btnText[0].setFont(btnFont);
+        btnText[1].setFont(btnFont);
+
+        btnText[0].setString("Resign");
+        btnText[0].setCharacterSize(20);
+        btnText[0].setFillColor(sf::Color::White);
+
+        btnText[0].setPosition(sf::Vector2f(startXPosition + 70.f, startYPosition + 172.f));
+        target->draw(btnText[0]);
+
+        btnBox[1].setPosition(sf::Vector2f(startXPosition + 275.f, startYPosition + 160.f));
+        btnBox[1].setSize(sf::Vector2f(130.f, 50.f));
+        btnBox[1].setFillColor(sf::Color(169, 169, 169));
+
+        target->draw(btnBox[1]);
+
+        btnText[1].setString("Cancel");
+        btnText[1].setCharacterSize(20);
+        btnText[1].setFillColor(sf::Color::White);
+
+        btnText[1].setPosition(sf::Vector2f(startXPosition + 305.f, startYPosition + 172.f));
+        target->draw(btnText[1]);
+
+        bool clicked;
+        char del1, del2;
+        float mouseX, mouseY;
+
+        std::ifstream mousePositionFile("../templates/mouse_position.txt");
+        mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+        mousePositionFile.close();
+
+        sf::Vector2f clickPosition(mouseX, mouseY);
+
+        if (clicked)
+        {
+            if (btnBox[0].getGlobalBounds().contains(clickPosition))
+            {
+                std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
+                mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
+                mousePositionFile_1.close();
+
+                std::ofstream resignPopupFile_1("../templates/resign_popup.txt");
+                resignPopupFile_1 << 0;
+                resignPopupFile_1.close();
+
+                std::ofstream resignConfirmFile("../templates/resign_confirm.txt");
+                resignConfirmFile << 1;
+                resignConfirmFile.close();
+            }
+
+            if (btnBox[1].getGlobalBounds().contains(clickPosition))
+            {
+                std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
+                mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
+                mousePositionFile_1.close();
+
+                std::ofstream resignPopupFile_1("../templates/resign_popup.txt");
+                resignPopupFile_1 << 0;
+                resignPopupFile_1.close();
+            }
+        }
+    }
+}
+
+void MatchState::renderResignConfirmDialog(sf::RenderTarget *target)
+{
+    bool confirm;
+    std::ifstream resignConfirmFile("../templates/resign_confirm.txt");
+    resignConfirmFile >> confirm;
+    resignConfirmFile.close();
+
+    if (confirm)
+    {
+        bool playerTurn;
+        std::ifstream playerTurnFile("../templates/player_turn.txt");
+        playerTurnFile >> playerTurn;
+        playerTurnFile.close();
+
+        sf::RectangleShape resignConfirmDialogBox;
+
+        sf::Font titleFont;
+        sf::Text titleText;
+
+        float startXPosition = (target->getSize().x - 445.f) / 2;
+        float startYPosition = (target->getSize().y - 315.f) / 2;
+
+        resignConfirmDialogBox.setPosition(sf::Vector2f(startXPosition, startYPosition));
+        resignConfirmDialogBox.setSize(sf::Vector2f(445.f, 315.f));
+        resignConfirmDialogBox.setFillColor(sf::Color(54, 58, 55));
+
+        target->draw(resignConfirmDialogBox);
+
+        titleFont.loadFromFile("../fonts/inter_bold.ttf");
+        titleText.setFont(titleFont);
+
+        std::string activePlayer = playerTurn ? "White" : "Black";
+        std::string dormantPlayer = playerTurn ? "Black" : "White";
+
+        titleText.setString(activePlayer + " King resigned");
+        titleText.setCharacterSize(35);
+        titleText.setFillColor(sf::Color::White);
+
+        titleText.setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 20.f));
+        target->draw(titleText);
+
+        titleText.setString("the match.");
+        titleText.setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 80.f));
+        target->draw(titleText);
+
+        titleText.setString(dormantPlayer + " King wins.");
+        titleText.setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 180.f));
+        target->draw(titleText);
+
+        sf::RectangleShape btnBox;
+
+        sf::Font btnFont;
+        sf::Text btnText;
+
+        btnBox.setPosition(sf::Vector2f(startXPosition + 275.f, startYPosition + 240.f));
+        btnBox.setSize(sf::Vector2f(130.f, 50.f));
+        btnBox.setFillColor(sf::Color::Black);
+
+        target->draw(btnBox);
+
+        btnFont.loadFromFile("../fonts/inter_bold.ttf");
+        btnText.setFont(btnFont);
+
+        btnText.setString("Okay");
+        btnText.setCharacterSize(20);
+        btnText.setFillColor(sf::Color::White);
+
+        btnText.setPosition(sf::Vector2f(startXPosition + 310.f, startYPosition + 252.f));
+        target->draw(btnText);
+
+        bool clicked;
+        char del1, del2;
+        float mouseX, mouseY;
+
+        std::ifstream mousePositionFile("../templates/mouse_position.txt");
+        mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+        mousePositionFile.close();
+
+        sf::Vector2f clickPosition(mouseX, mouseY);
+
+        if (clicked)
+        {
+            if (btnBox.getGlobalBounds().contains(clickPosition))
+            {
+                std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
+                mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
+                mousePositionFile_1.close();
+
+                std::ofstream resignFile("../templates/resign.txt");
+                resignFile << 1;
+                resignFile.close();
+            }
+        }
+    }
+}
+
+void MatchState::renderStalemateDialog(sf::RenderTarget *target)
+{
+    bool stalemate;
+    std::ifstream staleMateFile("../templates/stalemate.txt");
+    staleMateFile >> stalemate;
+    staleMateFile.close();
+
+    if (stalemate)
+    {
+        sf::RectangleShape stalemateDialogBox;
+
+        sf::Font titleFont;
+        sf::Text titleText;
+
+        float startXPosition = (target->getSize().x - 445.f) / 2;
+        float startYPosition = (target->getSize().y - 235.f) / 2;
+
+        stalemateDialogBox.setPosition(sf::Vector2f(startXPosition, startYPosition));
+        stalemateDialogBox.setSize(sf::Vector2f(445.f, 235.f));
+        stalemateDialogBox.setFillColor(sf::Color(54, 58, 55));
+
+        target->draw(stalemateDialogBox);
+
+        titleFont.loadFromFile("../fonts/inter_bold.ttf");
+        titleText.setFont(titleFont);
+
+        titleText.setString("Stalemate!!!");
+        titleText.setCharacterSize(35);
+        titleText.setFillColor(sf::Color::White);
+
+        titleText.setPosition(sf::Vector2f(startXPosition + 125.f, startYPosition + 20.f));
+        target->draw(titleText);
+
+        titleText.setString("It's a Draw.");
+        titleText.setPosition(sf::Vector2f(startXPosition + 135.f, startYPosition + 100.f));
+        target->draw(titleText);
+
+        sf::RectangleShape btnBox;
+
+        sf::Font btnFont;
+        sf::Text btnText;
+
+        btnBox.setPosition(sf::Vector2f(startXPosition + 275.f, startYPosition + 160.f));
+        btnBox.setSize(sf::Vector2f(130.f, 50.f));
+        btnBox.setFillColor(sf::Color::Black);
+
+        target->draw(btnBox);
+
+        btnFont.loadFromFile("../fonts/inter_bold.ttf");
+        btnText.setFont(btnFont);
+
+        btnText.setString("Okay");
+        btnText.setCharacterSize(20);
+        btnText.setFillColor(sf::Color::White);
+
+        btnText.setPosition(sf::Vector2f(startXPosition + 310.f, startYPosition + 172.f));
+        target->draw(btnText);
+
+        bool clicked;
+        char del1, del2;
+        float mouseX, mouseY;
+
+        std::ifstream mousePositionFile("../templates/mouse_position.txt");
+        mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
+        mousePositionFile.close();
+
+        sf::Vector2f clickPosition(mouseX, mouseY);
+
+        if (clicked)
+        {
+            if (btnBox.getGlobalBounds().contains(clickPosition))
+            {
+                std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
+                mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
+                mousePositionFile_1.close();
+
+                std::ofstream resignFile("../templates/resign.txt");
+                resignFile << 1;
+                resignFile.close();
+            }
+        }
+    }
+    
+}
+
 void MatchState::checkForPawnPromotion()
 {
     std::ifstream currentPositionFile("../templates/current_piece_position.txt");
@@ -1009,8 +1306,6 @@ void MatchState::isCheck(sf::RenderTarget *target)
         {
             this->virtualBoardPieces[x][y]->possibleMoves(x, y, pisColor, blackPossibleMoves);
         }
-        delete this->virtualBoardPieces[x][y];
-        this->virtualBoardPieces[x][y] = nullptr;
     }
     currentPositionFile_2.close();
 
@@ -1097,6 +1392,20 @@ void MatchState::isCheck(sf::RenderTarget *target)
             }
             currentPositionFile_4.close();
             tempPositionFile_4.close();
+
+            if (whiteKingCheckFlag)
+            {
+                this->isCheckmate(1, blackPossibleMoves);
+            }
+            else if (blackKingCheckFlag)
+            {
+                this->isCheckmate(0, whitePossibleMoves);
+            }
+
+            if (this->checkmate)
+            {
+                // END GAME
+            }
         }
     }
     else
@@ -1116,4 +1425,78 @@ void MatchState::isCheck(sf::RenderTarget *target)
         currentPositionFile_5.close();
         tempPositionFile_5.close();
     }
+
+    if ((this->playerTurn && !this->whiteKingCheckFlag && whitePossibleMoves.empty()) || (!this->playerTurn && !this->blackKingCheckFlag && blackPossibleMoves.empty()))
+    {
+        std::ofstream staleMateFile("../templates/stalemate.txt");
+        staleMateFile << 1;
+        staleMateFile.close();
+    }
+}
+
+void MatchState::isCheckmate(bool shade, std::vector<std::vector<int>> &oppMoveArray)
+{
+    std::vector<std::vector<int>> kingposMoves = {};
+
+    std::ifstream currentPositionFile_2("../templates/current_piece_position.txt");
+    std::string infoLine_2;
+
+    while (std::getline(currentPositionFile_2, infoLine_2))
+    {
+        std::istringstream infoString_2(infoLine_2);
+        int x, y;
+        std::string pisType;
+        bool pisColor;
+        std::string pisIdentifier;
+
+        infoString_2 >> x;
+        infoString_2.ignore(1, ',');
+
+        infoString_2 >> y;
+        infoString_2.ignore(1, ',');
+
+        std::getline(infoString_2, pisType, ',');
+        if (infoString_2.fail())
+            continue;
+
+        infoString_2 >> pisColor;
+        if (infoString_2.fail())
+            continue;
+        infoString_2.ignore(1, ',');
+
+        std::getline(infoString_2, pisIdentifier);
+        if (infoString_2.fail())
+            continue;
+
+        if (pisColor == shade && pisType == "king")
+        {
+            this->virtualBoardPieces[x][y]->possibleMoves(x, y, pisColor, kingposMoves);
+            for (const auto &kpair : kingposMoves)
+            {
+                int kxMove = kpair[0];
+                int kyMove = kpair[1];
+
+                int isNotSafe = 0;
+
+                for (const auto &bpair : oppMoveArray)
+                {
+                    int bxMove = bpair[0];
+                    int byMove = bpair[1];
+
+                    if (kxMove == bxMove && kyMove == byMove)
+                    {
+                        isNotSafe++;
+                    }
+                }
+
+                if (isNotSafe == 0)
+                {
+                    this->checkmate = false;
+                    return;
+                }
+            }
+            this->checkmate = true;
+        }
+    }
+    currentPositionFile_2.close();
 }

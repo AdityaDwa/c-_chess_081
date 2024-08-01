@@ -2,8 +2,8 @@
 
 void Game::initWindow()
 {
-    this->window = new sf::RenderWindow(sf::VideoMode(1728, 972), "Chess", sf::Style::Default);
-    // this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
+    // this->window = new sf::RenderWindow(sf::VideoMode(1728, 972), "Chess", sf::Style::Default);
+    this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
     this->window->setFramerateLimit(144);
     this->window->setVerticalSyncEnabled(true);
 }
@@ -78,6 +78,22 @@ void Game::initApplication()
     std::ofstream newStateFile("../templates/new_state.txt");
     newStateFile << 0;
     newStateFile.close();
+
+    std::ofstream resignFile("../templates/resign.txt");
+    resignFile << 0;
+    resignFile.close();
+
+    std::ofstream resignPopupFile("../templates/resign_popup.txt");
+    resignPopupFile << 0;
+    resignPopupFile.close();
+
+    std::ofstream resignConfirmFile("../templates/resign_confirm.txt");
+    resignConfirmFile << 0;
+    resignConfirmFile.close();
+
+    std::ofstream staleMateFile("../templates/stalemate.txt");
+    staleMateFile << 0;
+    staleMateFile.close();
 }
 
 void Game::initStates()
@@ -143,12 +159,24 @@ void Game::updateWindow()
 
             this->stateStack.push(new MatchState(this->window));
         }
-        
+
+        bool exit;
+        std::ifstream resignFile("../templates/resign.txt");
+        resignFile >> exit;
+        resignFile.close();
+        if (exit)
+        {
+            initApplication();
+
+            this->stateStack.push(new MainMenuState(this->window));
+        }
+
         if (this->stateStack.top()->isStateQuit())
         {
             this->stateStack.top()->endState();
             delete this->stateStack.top();
             this->stateStack.pop();
+            this->window->close();
         }
     }
     else
