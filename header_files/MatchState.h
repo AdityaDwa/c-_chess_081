@@ -32,13 +32,16 @@ private:
     bool checkmate = false;
 
 public:
+    // CONSTRUCTOR AND DESTRUCTOR
     MatchState(sf::RenderWindow *window);
     virtual ~MatchState();
 
+    // STATE UPDATING AND RENDERING METHODS
     void update(const float& deltaTime);
     void render(sf::RenderTarget *target = nullptr);
     void endState();
 
+    // COMPONENTS RENDERING METHODS
     void renderBoard(sf::RenderTarget *target);
     void renderPieces(sf::RenderTarget *target);
     void renderPawnPromoDialog(sf::RenderTarget *target);
@@ -47,6 +50,7 @@ public:
     void renderResignConfirmDialog(sf::RenderTarget *target);
     void renderStalemateDialog(sf::RenderTarget *target);
 
+    // SPECIAL MOVES CHECKING METHODS
     void checkForPawnPromotion();
     void castle(int initialRow, int initialColumn, int finalRow, int finalColumn);
     void isCheck(sf::RenderTarget *target);

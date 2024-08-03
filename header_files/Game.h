@@ -17,12 +17,16 @@ private:
     void initApplication();
     
 public:
+    // CONSTRUCTOR AND DESTRUCTOR
     Game();
     virtual ~Game();
 
+    //WINDOW UPDATE AND RENDER METHODS
     void updateDeltaTime();
     void updateWindow();
     void renderWindow();
+
+    // GAME LOOPING METHOD
     void run();
 
 };

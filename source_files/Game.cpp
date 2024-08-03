@@ -2,6 +2,7 @@
 
 void Game::initWindow()
 {
+    // WINDOW FOR THE GAME IS INITIALIZED WITH VARIABLES LIKE FPS LIMIT VSYNC AND SIZE
     // this->window = new sf::RenderWindow(sf::VideoMode(1728, 972), "Chess", sf::Style::Default);
     this->window = new sf::RenderWindow(sf::VideoMode::getFullscreenModes()[0], "Chess", sf::Style::Fullscreen);
     this->window->setFramerateLimit(144);
@@ -10,11 +11,13 @@ void Game::initWindow()
 
 void Game::initStates()
 {
+    // FIRST STATE ON THE STATESTACK IS PUSHED WHEN THE STATES ARE INITIALIZED
     this->stateStack.push(new MainMenuState(this->window));
 }
 
 Game::Game()
 {
+    // GAME INITIALIZING FUNCTIONS ARE INVOKED
     this->initWindow();
     this->initApplication();
     this->initStates();
@@ -22,32 +25,38 @@ Game::Game()
 
 Game::~Game()
 {
+    // IF THE STATE STACK IS NOT EMPTY THE TOP STACK POINTER IS DELETED AS WELL AS THE ACTUAL STATE
     while (!this->stateStack.empty())
     {
         delete this->stateStack.top();
         this->stateStack.pop();
     }
 
+    // GAME WINDOW IS DELETED AND ITS POINTER IS POINTED TO NULL
     delete this->window;
     this->window = nullptr;
 }
 
 void Game::updateDeltaTime()
 {
+    // IT CALCULATES THE ELAPSED TIME BETWEEN EACH CONCURRENT FRAME
     this->deltaTime = this->dtClock.restart().asSeconds();
 }
 
 void Game::updateWindow()
 {
+    // THIS IS A EVENT LISTENER FOR EVENT HAPPENING IN THE WINDOW
     while (this->window->pollEvent(this->e))
     {
         if (e.type == sf::Event::Closed)
         {
+            // THE WINDOW GAME IS CLOSED WHEN CLOSE BUTTON ON THE TITLE BAR IS CLICKED
             this->window->close();
         }
 
         if (e.type == sf::Event::MouseButtonPressed)
         {
+            // CLICK FLAG AND CURRENT MOUSE POINTER POSITION IS UPDATED ON THE TXT FILE
             std::ofstream mousePositionFile("../templates/mouse_position.txt");
             mousePositionFile << 1 << ',' << e.mouseButton.x << ',' << e.mouseButton.y << std::endl;
             mousePositionFile.close();
@@ -56,8 +65,10 @@ void Game::updateWindow()
 
     if (!this->stateStack.empty())
     {
+        // UPDATE FUNCTION OF THE STATE IN THE STATE STACK IS INVOKED
         this->stateStack.top()->update(this->deltaTime);
 
+        // STATE GEN FLAG IS UPDATED ON THE TXT FILE
         bool newStateGen;
         std::ifstream newStateFile("../templates/new_state.txt");
         newStateFile >> newStateGen;
@@ -69,6 +80,7 @@ void Game::updateWindow()
             newStateFile_1 << 0;
             newStateFile_1.close();
 
+            // MATCHSTATE IS PUSHED IN THE STATE STACK ACCORDING TO STATE GEN FLAG
             this->stateStack.push(new MatchState(this->window));
         }
 
@@ -78,6 +90,7 @@ void Game::updateWindow()
         resignFile.close();
         if (exit)
         {
+            // EXIT FLAG IS CHECKED AND APPLICATION IS INITIALIZED AND RETURNED TO MAINMENUSTATE
             initApplication();
 
             this->stateStack.push(new MainMenuState(this->window));
@@ -85,6 +98,7 @@ void Game::updateWindow()
 
         if (this->stateStack.top()->isStateQuit())
         {
+            // GAME IS TERMINATED IF STATE QUIT FUNCTION OF TOP STATE GIVES TRUE VALUE
             this->stateStack.top()->endState();
             delete this->stateStack.top();
             this->stateStack.pop();
@@ -100,13 +114,16 @@ void Game::updateWindow()
 
 void Game::renderWindow()
 {
+    // PREVIOUS FRAME CONTENTS ARE CLEARED
     this->window->clear();
 
     if (!this->stateStack.empty())
     {
+        // RENDER FUNCTION OF TOP STATE IS INVOKED
         this->stateStack.top()->render();
     }
 
+    // UPDATED CONTENTS ON THE WINDOW ARE DISPLAYED
     this->window->display();
 }
 
@@ -114,6 +131,7 @@ void Game::run()
 {
     while (this->window->isOpen())
     {
+        // INVOKES GAME UPDATING AND RENDERING FUNCTIONS UNTIL WINDOW IS OPEN
         this->updateDeltaTime();
         this->updateWindow();
         this->renderWindow();
@@ -122,6 +140,8 @@ void Game::run()
 
 void Game::initApplication()
 {
+    // UPDATES ALL FILES TO THEIR INITIAL VALUES FOR GAME INITIALIZATION
+
     std::ifstream initialPositionFile("../templates/initial_piece_position.txt");
     std::ofstream currentPositionFile("../templates/current_piece_position.txt");
     std::ofstream tempPositionFile("../templates/temp_piece_position.txt");

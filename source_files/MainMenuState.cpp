@@ -2,6 +2,7 @@
 
 MainMenuState::MainMenuState(sf::RenderWindow *window) : State(window)
 {
+    // STATE BACKGROUND AND SIZE ARE INITIALIZED
     this->stateBackground.setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
     this->stateBackground.setFillColor(sf::Color(54, 58, 55));
 }
@@ -21,6 +22,7 @@ void MainMenuState::render(sf::RenderTarget *target)
         target = this->window;
     }
 
+    // BACKGROUND IS RENDERED FIRST AND THEN THE BUTTONS ON THE WINDOW
     target->draw(this->stateBackground);
     this->renderBtns(target);
 }
@@ -31,6 +33,7 @@ void MainMenuState::endState()
 
 void MainMenuState::renderBtns(sf::RenderTarget *target)
 {
+    // TWO RECTANBLE SHAPE OBJECT ARE CREATED TO RENDER BUTTONS ON THE MAIN MENU
     sf::RectangleShape btnBox[2];
 
     sf::Font btnFont;
@@ -85,16 +88,20 @@ void MainMenuState::renderBtns(sf::RenderTarget *target)
     mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
     mousePositionFile.close();
 
+    // CURRENT MOUSE POSITION AND CLICKED FLAG IS RETRIEVED
     sf::Vector2f clickPosition(mouseX, mouseY);
 
     if (clicked)
     {
+        // IF THE PLAY BUTTON IS CLICKED AND THE BUTTON CONTAINS THE MOUSE POSITION
         if (btnBox[0].getGlobalBounds().contains(clickPosition))
         {
+            // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
             std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
             mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
             mousePositionFile_1.close();
 
+            // NEW STATE GEN FLAG IS TURNED ON
             std::ofstream newStateFile("../templates/new_state.txt");
             newStateFile << 1;
             newStateFile.close();
@@ -102,6 +109,7 @@ void MainMenuState::renderBtns(sf::RenderTarget *target)
 
         if (btnBox[1].getGlobalBounds().contains(clickPosition))
         {
+            // BOOL VALUE OF QUITSTATE IS SET TO TRUE
             this->quitState = true;
         }
     }

@@ -32,9 +32,11 @@ protected:
     sf::Sprite sprite;
 
 public:
+    // CONSTRUTOR AND DESTRUCTOR
     Button(int row, int column, int parentRow, int parentColumn, bool parentColor, sf::RenderTarget *target);
     virtual ~Button();
 
+    // UPDATE AND RENDER METHODS
     void update();
     void render(sf::RenderTarget *target);
 };

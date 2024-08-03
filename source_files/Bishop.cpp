@@ -10,11 +10,14 @@ Bishop::~Bishop()
 
 void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>> &moveArray)
 {
+    // INVOKING FUNCTION TO READ THE CURRENT STATE OF THE BOARD
     std::vector<std::vector<std::string>> boardState = this->readBoardState();
 
+    // ADDING POSSIBLE MOVES IN ARRAY IN RIGHT TOP DIAGONAL
     int i = 1;
     while (((row + i) < 8) && ((column + i) < 8))
     {
+        // CHECKS IF THE CURRENT ITERATION OF THE COORDINATE IN THE BOARD IS EMPTY OR NOT
         if (!boardState[row + i][column + i].empty())
         {
             std::stringstream boardInfoString(boardState[row + i][column + i]);
@@ -27,10 +30,12 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
 
             if (color == pieceColor)
             {
+                // IF THE PIECE IN THE POSITION IS OF SAME COLOR AS THE MOVING PIECE THEN THE WHOLE LOOP IS SKIPPED
                 break;
             }
             else
             {
+                // IF THE PIECE IS OF DIFFERENT COLOR THEN THIS MOVE IS ADDED AND THE WHOLE LOOP IS SKIPPED
                 moveArray.push_back({row + i, column + i});
                 break;
             }
@@ -40,6 +45,7 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
         i++;
     }
 
+    // ADDING POSSIBLE MOVES IN ARRAY IN RIGHT BOTTOM DIAGONAL
     int j = 1;
     while (((row + j) < 8) && ((column - j) >= 0))
     {
@@ -68,6 +74,7 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
         j++;
     }
 
+    // ADDING POSSIBLE MOVES IN ARRAY IN LEFT TOP DIAGONAL
     int k = 1;
     while (((row - k) >= 0) && ((column + k) < 8))
     {
@@ -96,6 +103,7 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
         k++;
     }
 
+    // ADDING POSSIBLE MOVES IN ARRAY IN LEFT BOTTOM DIAGONAL
     int l = 1;
     while (((row - l) >= 0) && ((column - l) >= 0))
     {
@@ -108,7 +116,7 @@ void Bishop::possibleMoves(int row, int column, bool pieceColor, std::vector<std
 
             std::getline(boardInfoString, piece, ',');
             boardInfoString >> color;
-            
+
             if (color == pieceColor)
             {
                 break;

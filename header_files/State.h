@@ -31,12 +31,15 @@ protected:
     sf::Vector2f mousePosView;
 
 public:
+    // CONSTRUCTOR AND DESTRUCTOR
     State(sf::RenderWindow *window);
     virtual ~State();
 
+    // STATE MANAGEMENT METHODS
     const bool &isStateQuit() const;
     virtual void updateMousePositions();
 
+    // PURE VIRTUAL FUNCTIONS FOR DERIVED STATE CLASSES
     virtual void update(const float &deltaTime) = 0;
     virtual void render(sf::RenderTarget *target = nullptr) = 0;
     virtual void endState() = 0;
