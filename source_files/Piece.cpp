@@ -6,6 +6,7 @@ Piece::Piece(bool pieceColor, int row, int column, sf::Color btnColor, std::stri
     this->row = row;
     this->column = column;
 
+    // CURRENT PLAYER TURN IS RETRIVED
     bool playerTurn;
     std::ifstream playerTurnFile("../templates/player_turn.txt");
     playerTurnFile >> playerTurn;
@@ -13,15 +14,18 @@ Piece::Piece(bool pieceColor, int row, int column, sf::Color btnColor, std::stri
 
     if (playerTurn)
     {
+        // X AND Y POSITION IF IT IS WHITE PLAYER'S TURN
         this->xPosition = ((target->getSize().x - 960.f) / 2) + (row * 120.f);
         this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - column) * 120.f);
     }
     else
     {
+        // X AND Y POSITION IF IT IS BLACK PLAYER'S TURN
         this->xPosition = ((target->getSize().x - 960.f) / 2) + (std::abs(row - 7) * 120.f);
         this->yPosition = ((target->getSize().y - 960.f) / 2) + ((7 - std::abs(column - 7)) * 120.f);
     }
 
+    // TEXTURE IS LOADED FROM FILE AND SCALING IS DONE
     this->texture.loadFromFile(imagePath);
     this->texture.setSmooth(true);
     this->sprite.setTexture(this->texture);
@@ -42,6 +46,7 @@ void Piece::movePiece(int currentRow, int currentColumn, int targetRow, int targ
     std::ifstream currentPositionFile("../templates/current_piece_position.txt");
     std::string infoLine;
 
+    // PIECE TYPE, COLOR AND IDENTIFIER OF CURRENT POSITION IS SEARCHED AND STORED
     while (std::getline(currentPositionFile, infoLine))
     {
         std::istringstream infoString(infoLine);
@@ -87,6 +92,7 @@ void Piece::movePiece(int currentRow, int currentColumn, int targetRow, int targ
     std::ofstream tempMoveFile("../templates/moving_piece.txt");
     std::string infoLine_1;
 
+    // STORED INFO IS OVERIDDEN ON TARGET POSITION AND CURRENT POSITION IS NULLIFIED
     while (std::getline(currentPositionFile_1, infoLine_1))
     {
         std::istringstream infoString(infoLine_1);
@@ -121,6 +127,7 @@ void Piece::movePiece(int currentRow, int currentColumn, int targetRow, int targ
     std::ofstream activeTileInfoFile("../templates/active_tile_info.txt");
     std::string inactivateLine;
 
+    // ACTIVE INDICATOR IS REMOVED FROM THE CURRENT POSITION AS IT MOVES TO TARGET POSITION
     while (std::getline(tileInactivatorFile, inactivateLine))
     {
         activeTileInfoFile << inactivateLine << std::endl;
@@ -135,6 +142,7 @@ std::vector<std::vector<std::string>> Piece::readBoardState()
     std::ifstream currentPositionFile("../templates/current_piece_position.txt");
     std::string infoLine;
 
+    // STORES THE PIECE TYPE AND ITS COLOR ON THE BOARD IN A VECTOR
     while (std::getline(currentPositionFile, infoLine))
     {
         std::stringstream infoString(infoLine);
@@ -168,6 +176,7 @@ std::vector<std::vector<std::string>> Piece::readBoardState()
 
 void Piece::update()
 {
+    // CURRENT PLAYER TURN IS RETRIEVED
     bool playerTurn;
     std::ifstream playerTurnFile("../templates/player_turn.txt");
     playerTurnFile >> playerTurn;
@@ -183,16 +192,20 @@ void Piece::update()
         mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
         mousePositionFile.close();
 
+        // CURRENT MOUSE POSITION AND CLICKED FLAG IS RETRIEVED
         sf::Vector2f clickPosition(mouseX, mouseY);
 
         if (clicked)
         {
             if (this->sprite.getGlobalBounds().contains(clickPosition))
             {
+                // IF THE BUTTON IS CLICKED AND THE BUTTON CONTAINS THE MOUSE POSITION
+
                 std::ifstream activeTileInfoFile("../templates/active_tile_info.txt");
                 std::ofstream changeActiveTileFile("../templates/change_active_tile.txt");
                 std::string activeInfoLine;
 
+                // CLICKED PIECE ACTIVE INDICATOR IS TURNED ON AND OTHER TILES ARE MADE INACTIVE
                 for (int i = 0; i < 8; ++i)
                 {
                     for (int j = 0; j < 8; ++j)
@@ -223,6 +236,7 @@ void Piece::update()
                 std::filesystem::remove("../templates/active_tile_info.txt");
                 std::filesystem::rename("../templates/change_active_tile.txt", "../templates/active_tile_info.txt");
 
+                // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
                 std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
                 mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
                 mousePositionFile_1.close();
@@ -233,5 +247,6 @@ void Piece::update()
 
 void Piece::render(sf::RenderTarget *target)
 {
+    // PIECE IS DRAWN ON THE TARGET I.E. WINDOW
     target->draw(this->sprite);
 }

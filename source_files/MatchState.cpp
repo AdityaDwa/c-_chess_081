@@ -2,8 +2,11 @@
 
 MatchState::MatchState(sf::RenderWindow *window) : State(window)
 {
+    // STATE BACKGROUND AND SIZE ARE INITIALIZED
     this->stateBackground.setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
     this->stateBackground.setFillColor(sf::Color(54, 58, 55));
+
+    // BOARD PIECES AND VIRTUAL BOARD PIECES ARRAYS ARE NULL POINTED
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
@@ -13,6 +16,7 @@ MatchState::MatchState(sf::RenderWindow *window) : State(window)
         }
     }
 
+    // MOVE BUTTONS ARRAY IS NULL POINTED
     for (int i = 0; i < 30; i++)
     {
         this->btns[i] = nullptr;
@@ -21,6 +25,7 @@ MatchState::MatchState(sf::RenderWindow *window) : State(window)
 
 MatchState::~MatchState()
 {
+    // EACH PIECE OBJECT IN BOARD PIECES AND VIRTUAL BOARD PIECES IS DELETED AND NULL POINTED
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; i < 8; j++)
@@ -33,6 +38,7 @@ MatchState::~MatchState()
         }
     }
 
+    // EACH MOVE BUTTON IN BTNS ARRAY IS DELETED AND NULL POINTED
     for (int i = 0; i < 30; i++)
     {
         delete this->btns[i];
@@ -42,6 +48,7 @@ MatchState::~MatchState()
 
 void MatchState::update(const float &deltaTime)
 {
+    // METHOD TO UPDATE MOUSE POSITIONS IN THE WINDOW IS INVOKED
     this->updateMousePositions();
 
     for (int i = 0; i < 8; i++)
@@ -50,6 +57,7 @@ void MatchState::update(const float &deltaTime)
         {
             if (this->boardPieces[i][j] != nullptr)
             {
+                // UPDATE METHOD OF EACH PIECE OBJECT IN BOARD PIECES ARRAY IS INVOKED IF THE CURRENT ARRAY ELEMENT IS NOT NULLPTR
                 this->boardPieces[i][j]->update();
             }
         }
@@ -59,6 +67,7 @@ void MatchState::update(const float &deltaTime)
     {
         if (this->btns[i] != nullptr)
         {
+            // UPDATE METHOD OF EACH BUTTON OBJECT IN BTNS ARRAY IS INVOKED IF THE CURRENT ARRAY ELEMENT IS NOT NULLPTR
             this->btns[i]->update();
         }
     }
@@ -71,10 +80,12 @@ void MatchState::render(sf::RenderTarget *target)
         target = this->window;
     }
 
+    // BACKGROUND AND GAME COMPONENTS ARE RENDERED
     target->draw(this->stateBackground);
     this->renderBoard(target);
     this->renderPieces(target);
 
+    // DIALOG BOX TO INDICATE VARIOUS GAME PROGRESS ARE RENDERED
     this->renderPawnPromoDialog(target);
     this->renderCheckDialog(target);
     this->renderResignDialog(target);
@@ -84,11 +95,13 @@ void MatchState::render(sf::RenderTarget *target)
 
 void MatchState::endState()
 {
+    // DESTRUCTOR OF MATCHSTATE OBJECT IS INVOKED
     this->~MatchState();
 }
 
 void MatchState::renderBoard(sf::RenderTarget *target)
 {
+    // SQUARES ON THE CHESS BOARD ARE RENDERED
     int numSquares = 8;
     float boardSquareSize = 120.f;
     sf::Color boardColors[2] = {sf::Color(235, 236, 220), sf::Color(139, 85, 19)};
@@ -103,6 +116,8 @@ void MatchState::renderBoard(sf::RenderTarget *target)
         {
             sf::RectangleShape square(sf::Vector2f(boardSquareSize, boardSquareSize));
             square.setPosition(startXPosition + (i * boardSquareSize), startYPosition + (j * boardSquareSize));
+
+            // SQUARE COLOR IS RENDERED ALTERNATIVELY
             square.setFillColor(boardColors[(i + j) % 2]);
 
             target->draw(square);
@@ -114,9 +129,11 @@ void MatchState::renderBoard(sf::RenderTarget *target)
     this->xtileLabel.setFont(this->labelFont);
     this->ytileLabel.setFont(this->labelFont);
 
+    // COLUMN AND ROW LABELS ARE RENDERED IN ORDER ACCORDING TO THE PLAYER TURN
     char colLabels[8] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     char rowLabels[8] = {'8', '7', '6', '5', '4', '3', '2', '1'};
 
+    // CURRENT PLAYER TURN IS RETRIEVED
     bool playerTurn;
     std::ifstream playerTurnFile("../templates/player_turn.txt");
     playerTurnFile >> playerTurn;
@@ -124,6 +141,7 @@ void MatchState::renderBoard(sf::RenderTarget *target)
 
     for (int i = 0; i < 8; i++)
     {
+        // CHANGE ORIENTATION OF LABELS ACCORDING TO PLAYER TURN
         int num = playerTurn ? i : std::abs(i - 7);
 
         this->xtileLabel.setString(colLabels[num]);
@@ -148,6 +166,7 @@ void MatchState::renderBoard(sf::RenderTarget *target)
         target->draw(this->ytileLabel);
     }
 
+    // ACTIVE PLAYER INDICATOR RENDERED ACCORDING TO PLAYER TURN
     float whitePlayerIconPosition = playerTurn ? 730.f : 130.f;
     float blackPlayerIconPosition = playerTurn ? 130.f : 730.f;
 
@@ -196,6 +215,7 @@ void MatchState::renderBoard(sf::RenderTarget *target)
     this->playerName.setPosition(180.f, blackPlayerNamePosition);
     target->draw(this->playerName);
 
+    // RECTANGLE SHAPE OBJECT TO RENDER RESIGN BUTTON
     sf::RectangleShape exitBtn;
 
     sf::Font exitBtnFont;
@@ -228,16 +248,21 @@ void MatchState::renderBoard(sf::RenderTarget *target)
     mousePositionFile >> clicked >> del1 >> mouseX >> del2 >> mouseY;
     mousePositionFile.close();
 
+    // CURRENT MOUSE POSITION AND CLICKED FLAG IS RETRIEVED
     sf::Vector2f clickPosition(mouseX, mouseY);
 
     if (clicked)
     {
         if (exitBtn.getGlobalBounds().contains(clickPosition))
         {
+            // IF THE BUTTON IS CLICKED AND THE BUTTON CONTAINS THE MOUSE POSITION
+
+            // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
             std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
             mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
             mousePositionFile_1.close();
 
+            // RESIGN FLAG IS TURNED ON
             std::ofstream resignPopupFile("../templates/resign_popup.txt");
             resignPopupFile << 1;
             resignPopupFile.close();
@@ -253,6 +278,7 @@ void MatchState::renderPieces(sf::RenderTarget *target)
     std::ifstream activeTileInfoFile("../templates/active_tile_info.txt");
     std::string activeLineInfo;
 
+    // CURRENT PIECE POSITIONS AND ACTIVE TILE INFO ARE RETRIEVED
     for (int i = 0; i < 8; i++)
     {
         for (int j = 0; j < 8; j++)
@@ -298,9 +324,11 @@ void MatchState::renderPieces(sf::RenderTarget *target)
             sf::Color btnColor = num3 ? sf::Color(169, 169, 169) : sf::Color(0, 0, 0, 0);
             if (num3)
             {
+                // POSSIBLE MOVE OF PIECE IN COORDINATE OF TILE WHICH IS ACTIVE IS RETRIEVED
                 std::vector<std::vector<int>> moveArray = {};
                 this->boardPieces[row][col]->possibleMoves(row, col, pieceColor, moveArray);
 
+                // MOVE BUTTONS TO INDICATE POSSIBLE MOVE IN UI ARE RENDERED
                 int i = 0;
                 for (const auto &pair : moveArray)
                 {
@@ -315,7 +343,10 @@ void MatchState::renderPieces(sf::RenderTarget *target)
 
             std::string imageColor = pieceColor ? "white" : "black";
 
+            // PIECE OBJECT OF PREVIOUS RENDER ITERATION IS DELETED TO FREE UP MEMORY
             delete this->boardPieces[row][col];
+
+            // PIECE IS RENDERED IN THE SPECIFIC COORDINATE ACCORDING TO ITS TYPE
             if (pieceType == "pawn")
             {
                 std::string imagePath = "../src/" + imageColor + "_pawn.png";
@@ -357,6 +388,7 @@ void MatchState::renderPieces(sf::RenderTarget *target)
     std::ifstream isButtonClickedFile("../templates/is_button_clicked.txt");
     std::string coordInfoLine;
 
+    // FUNCTIONS TO RUN AFTER THE MOVE BUTTON IS CLICKED ARE CALLED
     while (std::getline(isButtonClickedFile, coordInfoLine))
     {
         std::istringstream coordInfoString(coordInfoLine);
@@ -367,6 +399,9 @@ void MatchState::renderPieces(sf::RenderTarget *target)
         coordInfoString >> initialRow >> delimiter1 >> initialColumn >> delimiter2 >> finalRow >> delimiter3 >> finalColumn >> delimiter4 >> moveFlag;
         if (moveFlag)
         {
+            // PIECE IS MOVED IF MOVEFLAG IS ON
+
+            // IF THE MOVED PIECES WERE KING OR ROOKS THEN THEIR MOVE FLAG IS TURNED ON TO PREVENT CASTLING FROM NOW ON
             if (this->boardPieces[initialRow][initialColumn] != nullptr)
             {
                 std::ifstream currentPositionFile_5("../templates/current_piece_position.txt");
@@ -477,24 +512,31 @@ void MatchState::renderPieces(sf::RenderTarget *target)
                 }
                 currentPositionFile_5.close();
 
+                // CASTLING IS DONE IF THE KING OF ACTIVE PLAYER IS NOT IN CHECK
                 if ((this->playerTurn && !this->whiteKingCheckFlag) || (!this->playerTurn && !this->blackKingCheckFlag))
                 {
                     this->castle(initialRow, initialColumn, finalRow, finalColumn);
                 }
 
+                // THE PIECE IS MOVED USING MOVEPIECE FUNCTION
                 this->boardPieces[initialRow][initialColumn]->movePiece(initialRow, initialColumn, finalRow, finalColumn);
+
+                // FUNCTIONS FOR PAWN PROMOTION AND CHECK ARE INVOKED
                 this->checkForPawnPromotion();
                 this->isCheck(target);
 
+                // PIECE IN THE INITIAL POSITION IS DELETED TO FREE UP MEMORY
                 delete this->boardPieces[initialRow][initialColumn];
                 this->boardPieces[initialRow][initialColumn] = nullptr;
 
+                // ALL THE MOVE BUTTONS ARE DELETED
                 for (int i = 0; i < 30; i++)
                 {
                     delete this->btns[i];
                     this->btns[i] = nullptr;
                 }
 
+                // PLAYER TURN IS INVERSED FOR TURN MANAGEMENT
                 bool turnNum, inverseTurn;
                 std::ifstream playerTurnFile_2("../templates/player_turn.txt");
                 std::ofstream inversePlayerTurnFile_2("../templates/inverse_player_turn.txt");
@@ -512,6 +554,7 @@ void MatchState::renderPieces(sf::RenderTarget *target)
     }
     isButtonClickedFile.close();
 
+    // IS BUTTON CLICKED FLAG IS TURNED OFF AS THE PIECE WAS SUCCESSFULLY MOVED NOW ITS ANOTHER PLAYER'S TURN
     std::ofstream isButtonClickedFile_1("../templates/is_button_clicked.txt");
     isButtonClickedFile_1.close();
 }
@@ -528,6 +571,9 @@ void MatchState::renderPawnPromoDialog(sf::RenderTarget *target)
 
     if (pawnPromoFlag)
     {
+        // IF PAWN PROMO FLAG IS ON, THEN THE DIALOG BOX IS RENDERED
+
+        // RECTANGLE OBJECT TO RENDER DIALOG BOX
         sf::RectangleShape pawnPromoDialogBox;
 
         sf::Font titleFont;
@@ -565,6 +611,8 @@ void MatchState::renderPawnPromoDialog(sf::RenderTarget *target)
 
         sf::Vector2f clickPosition(mouseX, mouseY);
 
+        // RENDER APPROPRIATE PIECE COLOR ACCORDING TO THE PAWN COLOR
+        // EXAMPLE IF BLACK PAWN IS FOR PROMOTION THEN THE PROMOTED PIECE SHOULD ALSO BE BLACK
         if (pawnColor)
         {
             textures[0].loadFromFile("../src/white_queen.png");
@@ -604,6 +652,7 @@ void MatchState::renderPawnPromoDialog(sf::RenderTarget *target)
             {
                 if (sprites[i].getGlobalBounds().contains(clickPosition))
                 {
+                    // PAWN IS PROMOTED TO ACCORDING TO THE BUTTON CLICKED IN THE DIALOG BOX
                     std::string promotedPiece;
                     if (i == 0)
                     {
@@ -625,6 +674,7 @@ void MatchState::renderPawnPromoDialog(sf::RenderTarget *target)
                     std::ofstream tempPromoFile("../templates/promoting_piece.txt");
                     std::string infoLine;
 
+                    // TXT FILE STORING PIECE INFO IS UPDATED TO REPLACE PAWN TO PROMOTOED PIECE
                     while (std::getline(currentPositionFile, infoLine))
                     {
                         std::istringstream infoString(infoLine);
@@ -651,10 +701,12 @@ void MatchState::renderPawnPromoDialog(sf::RenderTarget *target)
                     std::filesystem::remove("../templates/current_piece_position.txt");
                     std::filesystem::rename("../templates/promoting_piece.txt", "../templates/current_piece_position.txt");
 
+                    // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
                     std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
                     mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
                     mousePositionFile_1.close();
 
+                    // PAWN PROMO FLAG IS TURNED OFF AS THE PAWN WAS PROMOTED SUCCESSFULLY
                     std::ofstream pawnPromotionInfoFile_1("../templates/pawn_promotion_info.txt");
                     pawnPromotionInfoFile_1 << 0 << ',' << 0 << ',' << 0 << ',' << 0;
                     pawnPromotionInfoFile_1.close();
@@ -675,6 +727,7 @@ void MatchState::renderCheckDialog(sf::RenderTarget *target)
 
     if (checkFlag)
     {
+        // IF CHECK FLAG IS ON, THEN THE CHECK DIALOG BOX IS RENDERED
         sf::RectangleShape checkDialogBox;
 
         sf::Font titleFont;
@@ -701,6 +754,7 @@ void MatchState::renderCheckDialog(sf::RenderTarget *target)
 
         std::string playerShade = pieceColor ? "White" : "Black";
 
+        // INDICATOR MODIFIED ACCORDING TO WHICH KING IS IN CHECK
         titleText.setString(playerShade + " king is in danger.");
         titleText.setCharacterSize(25);
         titleText.setPosition(sf::Vector2f(startXPosition + 35.f, startYPosition + 80.f));
@@ -717,7 +771,7 @@ void MatchState::renderResignDialog(sf::RenderTarget *target)
 
     if (popup)
     {
-
+        // IF RESIGN POPUP FLAG IS ON, THEN RESIGN DIALOG BOX IS RENDERED
         sf::RectangleShape resignDialogBox;
 
         sf::Font titleFont;
@@ -795,14 +849,17 @@ void MatchState::renderResignDialog(sf::RenderTarget *target)
         {
             if (btnBox[0].getGlobalBounds().contains(clickPosition))
             {
+                // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
                 std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
                 mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
                 mousePositionFile_1.close();
 
+                // RESIGN FLAG IS TURNED OFF TO PREVENT MULTIPLE RESIGN
                 std::ofstream resignPopupFile_1("../templates/resign_popup.txt");
                 resignPopupFile_1 << 0;
                 resignPopupFile_1.close();
 
+                // CONFIRMATION FLAG IS TURNED ON
                 std::ofstream resignConfirmFile("../templates/resign_confirm.txt");
                 resignConfirmFile << 1;
                 resignConfirmFile.close();
@@ -810,10 +867,12 @@ void MatchState::renderResignDialog(sf::RenderTarget *target)
 
             if (btnBox[1].getGlobalBounds().contains(clickPosition))
             {
+                // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
                 std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
                 mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
                 mousePositionFile_1.close();
 
+                // RESIGN FLAG IS TURNED OFF TO HIDE RESIGN DIALOG BOX
                 std::ofstream resignPopupFile_1("../templates/resign_popup.txt");
                 resignPopupFile_1 << 0;
                 resignPopupFile_1.close();
@@ -831,6 +890,7 @@ void MatchState::renderResignConfirmDialog(sf::RenderTarget *target)
 
     if (confirm)
     {
+        // IF CONFIRM FLAG IS ON, THEN CONFIRM DIALOG BOX IS TURNED ON
         bool playerTurn;
         std::ifstream playerTurnFile("../templates/player_turn.txt");
         playerTurnFile >> playerTurn;
@@ -867,6 +927,7 @@ void MatchState::renderResignConfirmDialog(sf::RenderTarget *target)
         titleText.setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 80.f));
         target->draw(titleText);
 
+        // INDICATOR IS MODIFIED ACCORDING TO THE PLAYER TURN
         titleText.setString(dormantPlayer + " King wins.");
         titleText.setPosition(sf::Vector2f(startXPosition + 40.f, startYPosition + 180.f));
         target->draw(titleText);
@@ -906,10 +967,12 @@ void MatchState::renderResignConfirmDialog(sf::RenderTarget *target)
         {
             if (btnBox.getGlobalBounds().contains(clickPosition))
             {
+                // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
                 std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
                 mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
                 mousePositionFile_1.close();
 
+                // FLAG TO REDIRECT TO MAIN MENU IS TURNED ON
                 std::ofstream resignFile("../templates/resign.txt");
                 resignFile << 1;
                 resignFile.close();
@@ -927,6 +990,7 @@ void MatchState::renderStalemateDialog(sf::RenderTarget *target)
 
     if (stalemate)
     {
+        // IF STALEMATE FLAG IS ON, THEN STALEMATE DIALOG BOX IS TURNED ON
         sf::RectangleShape stalemateDialogBox;
 
         sf::Font titleFont;
@@ -990,17 +1054,18 @@ void MatchState::renderStalemateDialog(sf::RenderTarget *target)
         {
             if (btnBox.getGlobalBounds().contains(clickPosition))
             {
+                // CLICKED FLAG IS TURNED OFF TO PREVENT MULTIPLE CLICK DETECTION
                 std::ofstream mousePositionFile_1("../templates/mouse_position.txt");
                 mousePositionFile_1 << 0 << ',' << 0 << ',' << 0;
                 mousePositionFile_1.close();
 
+                // FLAG TO REDIRECT TO MAIN MENU IS TURNED ON
                 std::ofstream resignFile("../templates/resign.txt");
                 resignFile << 1;
                 resignFile.close();
             }
         }
     }
-    
 }
 
 void MatchState::checkForPawnPromotion()
@@ -1008,6 +1073,7 @@ void MatchState::checkForPawnPromotion()
     std::ifstream currentPositionFile("../templates/current_piece_position.txt");
     std::string infoLine;
 
+    // TO CHECK IF PAWN HAS REACHED TO THE LAST ROW
     while (std::getline(currentPositionFile, infoLine))
     {
         std::istringstream infoString(infoLine);
@@ -1035,6 +1101,7 @@ void MatchState::checkForPawnPromotion()
         if (infoString.fail())
             continue;
 
+        // TO CHECK FOR WHITE PAWN
         if (pisColor && pisType == "pawn" && y == 7)
         {
             std::ofstream pawnPromotionInfoFile_1("../templates/pawn_promotion_info.txt");
@@ -1042,6 +1109,7 @@ void MatchState::checkForPawnPromotion()
             pawnPromotionInfoFile_1.close();
             break;
         }
+        // TO CHECK FOR BLACK PAWN
         else if (!pisColor && pisType == "pawn" && y == 0)
         {
             std::ofstream pawnPromotionInfoFile_2("../templates/pawn_promotion_info.txt");
@@ -1064,6 +1132,7 @@ void MatchState::castle(int initialRow, int initialColumn, int finalRow, int fin
     std::ifstream currentPositionFile("../templates/current_piece_position.txt");
     std::string infoLine;
 
+    // TO CHECK IF CASTLING HAS BEEN DONE OR NOT
     while (std::getline(currentPositionFile, infoLine))
     {
         std::istringstream infoString(infoLine);
@@ -1092,8 +1161,10 @@ void MatchState::castle(int initialRow, int initialColumn, int finalRow, int fin
 
         if (_x == initialRow && _y == initialColumn)
         {
+            // IS KING IS IN SAME Y COORDINATE AS CASTLING OCCURS IN SAME Y COORDINATE
             if (_pisType == "king" && finalColumn == initialColumn)
             {
+                // FOR SHORT CASTLING
                 if (finalRow == (initialRow + 2))
                 {
                     currentPositionFile.close();
@@ -1114,6 +1185,7 @@ void MatchState::castle(int initialRow, int initialColumn, int finalRow, int fin
                         infoString_1 >> col;
                         infoString_1.ignore(1, ',');
 
+                        // REPLACING ROOK FROM INITIAL POSITION TO OPPOSITE SIDE OF KING
                         if ((row == (initialRow + 1)) && col == initialColumn)
                         {
                             castlingMoveFile_1 << row << ',' << col << ',' << "rook" << ',' << _pisColor << ',' << "rook2" << std::endl;
@@ -1133,6 +1205,7 @@ void MatchState::castle(int initialRow, int initialColumn, int finalRow, int fin
                     std::filesystem::rename("../templates/castling_move.txt", "../templates/current_piece_position.txt");
                 }
 
+                // FOR LONG CASTLING
                 if (finalRow == (initialRow - 2))
                 {
                     currentPositionFile.close();
@@ -1153,6 +1226,7 @@ void MatchState::castle(int initialRow, int initialColumn, int finalRow, int fin
                         infoString_2 >> col;
                         infoString_2.ignore(1, ',');
 
+                        // REPLACING ROOK FROM INITIAL POSITION TO OPPOSITE SIDE OF KING
                         if ((row == (initialRow - 1)) && col == initialColumn)
                         {
                             castlingMoveFile_2 << row << ',' << col << ',' << "rook" << ',' << _pisColor << ',' << "rook1" << std::endl;
@@ -1184,6 +1258,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
     std::ifstream currentPositionFile_1("../templates/current_piece_position.txt");
     std::string infoLine_1;
 
+    // TO RETRIEVE CURRENT COORDINATE OF BOTH KINGS
     while (std::getline(currentPositionFile_1, infoLine_1))
     {
         std::istringstream infoString_1(infoLine_1);
@@ -1218,11 +1293,13 @@ void MatchState::isCheck(sf::RenderTarget *target)
         {
             if (pisColor)
             {
+                // FOR WHITE KING
                 whiteKingCorrd[0] = x;
                 whiteKingCorrd[1] = y;
             }
             else
             {
+                // FOR BLACK KING
                 blackKingCorrd[0] = x;
                 blackKingCorrd[1] = y;
             }
@@ -1236,6 +1313,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
     std::ifstream currentPositionFile_2("../templates/current_piece_position.txt");
     std::string infoLine_2;
 
+    // RENDERING VIRTUAL BOARD PIECES TO EMULATE THE CURRENT POSITION OF PIECES IN THE REAL BOARD
     while (std::getline(currentPositionFile_2, infoLine_2))
     {
         std::istringstream infoString_2(infoLine_2);
@@ -1298,6 +1376,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
             this->virtualBoardPieces[x][y] = new King(pisColor, x, y, btnColor, imagePath, target);
         }
 
+        // POSSIBLE MOVE COORDINATES ARE PUSHED TO EACH ARRAY ACCORDING TO THE PIECE COLOR
         if (pisColor)
         {
             this->virtualBoardPieces[x][y]->possibleMoves(x, y, pisColor, whitePossibleMoves);
@@ -1312,6 +1391,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
     bool whiteKingCheckFlag = 0;
     bool blackKingCheckFlag = 0;
 
+    // TO CHECK IF ANY BLACK POSSIBLE MOVE COORDINATE COINCIDE WITH CURRENT COORDINATE OF WHITE KING
     for (const auto &bpair : blackPossibleMoves)
     {
         int xMove = bpair[0];
@@ -1322,6 +1402,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
         }
     }
 
+    // TO CHECK IF ANY WHITE POSSIBLE MOVE COORDINATE COINCIDE WITH CURRENT COORDINATE OF BLACK KING
     for (const auto &wpair : whitePossibleMoves)
     {
         int xMove = wpair[0];
@@ -1332,6 +1413,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
         }
     }
 
+    // CURRENT PLAYER TURN IS RETRIEVED
     bool playerTurn;
     std::ifstream playerTurnFile("../templates/player_turn.txt");
     playerTurnFile >> playerTurn;
@@ -1341,6 +1423,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
     this->whiteKingCheckFlag = whiteKingCheckFlag;
     this->blackKingCheckFlag = blackKingCheckFlag;
 
+    // TO CHECK IF CHECK FLAG IS ON
     if ((whiteKingCheckFlag) || (blackKingCheckFlag))
     {
         char deli;
@@ -1350,8 +1433,10 @@ void MatchState::isCheck(sf::RenderTarget *target)
         checkFlagFile >> whoseTurn >> deli >> prevFlag;
         checkFlagFile.close();
 
+        // IF FLAG WAS ALREADY ON WHICH MEANS THE USER DID AN INVALID MOVE AS THE KING IS STILL IN CHECK
         if (prevFlag)
         {
+            // THE MOVE IS RETRACTED BACK TO PREVIOUS MOVESET
             std::ifstream tempPositionFile_3("../templates/temp_piece_position.txt");
             std::ofstream currentPositionFile_3("../templates/current_piece_position.txt");
             std::string infoLine_3;
@@ -1363,6 +1448,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
             tempPositionFile_3.close();
             currentPositionFile_3.close();
 
+            // TURN IS INVERSED AS THE INVALID MOVE SHOULD NOT WASTE A PLAYER'S TURN
             bool turnNum, inverseTurn;
             std::ifstream playerTurnFile_1("../templates/player_turn.txt");
             std::ofstream inversePlayerTurnFile("../templates/inverse_player_turn.txt");
@@ -1378,6 +1464,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
         }
         else
         {
+            // THE POSITION INFO FILE IS UPDATED ACCORDINGLY IF THE CHECK FLAG WAS JUST TURNED ON
             std::ofstream checkFlagFile_1("../templates/check_flag.txt");
             checkFlagFile_1 << !playerTurn << ',' << 1;
             checkFlagFile_1.close();
@@ -1393,6 +1480,7 @@ void MatchState::isCheck(sf::RenderTarget *target)
             currentPositionFile_4.close();
             tempPositionFile_4.close();
 
+            // TO CHECK POSSIBLE CHECKMATE
             if (whiteKingCheckFlag)
             {
                 this->isCheckmate(1, blackPossibleMoves);
@@ -1441,6 +1529,7 @@ void MatchState::isCheckmate(bool shade, std::vector<std::vector<int>> &oppMoveA
     std::ifstream currentPositionFile_2("../templates/current_piece_position.txt");
     std::string infoLine_2;
 
+    // LOOPING OVER EACH PIECE TO IDENTIFY KING
     while (std::getline(currentPositionFile_2, infoLine_2))
     {
         std::istringstream infoString_2(infoLine_2);
@@ -1468,8 +1557,11 @@ void MatchState::isCheckmate(bool shade, std::vector<std::vector<int>> &oppMoveA
         if (infoString_2.fail())
             continue;
 
+        // IF PIECE IS KING AND COLOR MATCHES TO THE PASSED COLOR
         if (pisColor == shade && pisType == "king")
         {
+            // ALL POSSIBLE MOVE OF THE KING IS CHECKED IF IT TURNS OFF THE CHECK OFF
+            // IF IT CANNOT THEN IT IS CHECKMATE
             this->virtualBoardPieces[x][y]->possibleMoves(x, y, pisColor, kingposMoves);
             for (const auto &kpair : kingposMoves)
             {

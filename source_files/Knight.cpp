@@ -15,6 +15,7 @@ void Knight::possibleMoves(int row, int column, bool pieceColor, std::vector<std
     bool right = (row + 2) < 8;
     bool left = (row - 2) >= 0;
 
+    // MOVES ARE PUSHED TO MOVE ARRAY AFTER CHECKING IF THERE IS POSSIBLE SPACE IN THE BOARD
     if (((row + 1) < 8) && up)
     {
         moveArray.push_back({row + 1, column + 2});
@@ -61,11 +62,14 @@ void Knight::possibleMoves(int row, int column, bool pieceColor, std::vector<std
 
 void Knight::filterValidMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>> &moveArray, const std::vector<std::vector<std::string>> &boardState)
 {
+    // EACH MOVE GENERATED IS ITERATED TO CHECK IF IT IS VALID OR NOT
     std::vector<std::vector<int>> validMoves;
     for (const auto &move : moveArray)
     {
         int newRow = move[0];
         int newColumn = move[1];
+
+        // CHECKING IF THE CURRENT BOARD POSITION IS EMPTY OR NOT
         if (!boardState[newRow][newColumn].empty())
         {
             std::stringstream boardInfoString(boardState[newRow][newColumn]);
@@ -75,7 +79,8 @@ void Knight::filterValidMoves(int row, int column, bool pieceColor, std::vector<
 
             std::getline(boardInfoString, piece, ',');
             boardInfoString >> color;
-            
+
+            // CHECKING IF THE PIECE ON THE POSITION IS OF SAME COLOR AS KNIGHT OR NOT
             if (color == pieceColor)
             {
                 continue;

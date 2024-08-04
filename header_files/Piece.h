@@ -38,15 +38,19 @@ protected:
     std::string movingPieceIdentifier;
 
 public:
+    // CONSTRUCTOR AND DESTRUCTOR
     Piece(bool pieceColor, int row, int column, sf::Color btnColor, std::string imagePath, sf::RenderTarget *target);
     virtual ~Piece();
 
+    // PIECE MOVING METHODS
     void movePiece(int currentRow, int currentColumn, int targetRow, int targetColumn);
     std::vector<std::vector<std::string>> readBoardState();
 
+    // COMPONENT UPDATING AND RENDERING METHODS
     void update();
     void render(sf::RenderTarget *target);
 
+    // MOVE GENERATING METHODS
     virtual void possibleMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray) = 0;
     virtual void filterValidMoves(int row, int column, bool pieceColor, std::vector<std::vector<int>>& moveArray, const std::vector<std::vector<std::string>>& boardState) = 0;
 };
